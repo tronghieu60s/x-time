@@ -85,13 +85,13 @@ export const getProductDetail = async (path: string, browser: Browser) => {
   const page = await browser.newPage();
   await page.goto(rootPath);
 
-  const itemId = splitRootPath.pop();
-  const shopId = splitRootPath.pop();
+  const itemid = splitRootPath.pop();
+  const shopid = splitRootPath.pop();
 
   const product: ResponseShopeeProduct | null = await new Promise((resolve) => {
     page.on("response", async (response) => {
       const url = response.url();
-      if (url.includes(`?shopid=${shopId}&itemid=${itemId}`)) {
+      if (url.includes(`?shopid=${shopid}&itemid=${itemid}`)) {
         resolve((await response.json()).data);
       }
       setTimeout(() => resolve(null), 5000);

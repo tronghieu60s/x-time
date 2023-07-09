@@ -9,13 +9,17 @@ import { ProductType } from "@/features/products/common/types";
 import { onValue } from "firebase/database";
 import { Button, TextInput } from "flowbite-react";
 import { useFormik } from "formik";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { initialValues } from "./common/formik";
+import ProductListDetail from "@/features/products/ProductListDetail";
 
 export default function ShopeeHome() {
   const [isLogged, setIsLogged] = useState(false);
   const [clickedLogin, setClickedLogin] = useState(false);
   const [products, setProducts] = useState<ProductType[]>([]);
+  const [productKeySelected, setProductKeySelected] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     onValue(productsRef, async (snapshot) => {
@@ -36,9 +40,11 @@ export default function ShopeeHome() {
   }, []);
 
   const onUpdateProducts = useCallback(() => {
-    fetch("/api/ecoms/shopee/products/update", { method: "PATCH" }).then((res) => {
-      console.log(res);
-    });
+    fetch("/api/ecoms/shopee/products/update", { method: "PATCH" }).then(
+      (res) => {
+        console.log(res);
+      }
+    );
   }, []);
 
   const onTestLogin = useCallback(() => {
@@ -63,9 +69,58 @@ export default function ShopeeHome() {
     await updateProduct({ itemid, shopid, status: "pending" });
   }, [formikBag]);
 
+  const onViewProduct = useCallback((key: string) => {
+    setProductKeySelected(key);
+  }, []);
+
   const onDeleteProduct = useCallback((key: string) => {
     deleteProduct(key);
   }, []);
+
+  const productSelected = useMemo(
+    () => products.find((product) => product.key === productKeySelected),
+    [productKeySelected]
+  );
+
+  const onFollowProductModel = useCallback(
+    (model: string) => {
+      if (!productSelected) return;
+
+      const { key, models } = productSelected || {};
+      const findModeIndex = models.findIndex(
+        (selected) => selected.name === model
+      );
+      if (findModeIndex === -1) return;
+
+      if (!models[findModeIndex].isFollow) {
+        models[findModeIndex].isFollow = true;
+        updateProduct({ key, models, status: "success" });
+      }
+    },
+    [productSelected]
+  );
+
+  const onUnFollowProductModel = useCallback(
+    (model: string) => {
+      console.log(productSelected);
+      
+      if (!productSelected) return;
+
+      const { key, models } = productSelected || {};
+      const findModeIndex = models.findIndex(
+        (selected) => selected.name === model
+      );
+      console.log(findModeIndex);
+      
+      if (findModeIndex === -1) return;
+
+      if (models[findModeIndex].isFollow) {
+        models[findModeIndex].isFollow = false;
+        updateProduct({ key, models, status: "success" });
+      }
+    },
+    [productSelected]
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -96,7 +151,17 @@ export default function ShopeeHome() {
           </Button>
         </div>
       </div>
-      <ProductList products={products} onDelete={onDeleteProduct} />
+      <ProductList
+        products={products}
+        onView={onViewProduct}
+        onDelete={onDeleteProduct}
+      />
+      <ProductListDetail
+        product={productSelected}
+        onClose={() => setProductKeySelected(null)}
+        onFollowProductModel={onFollowProductModel}
+        onUnFollowProductModel={onUnFollowProductModel}
+      />
     </div>
   );
 }

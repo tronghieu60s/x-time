@@ -1,19 +1,19 @@
 import { formatCurrency } from "@/core/commonFuncs";
 import { Badge, Button, Table } from "flowbite-react";
-import { CheckCircle, X } from "react-feather";
-import { ProductType } from "./common/types";
 import { getColorFromStatus, getTextFromStatus } from "./common";
+import { ProductType } from "./common/types";
 
 type Props = {
   products: ProductType[];
+  onView: (key: string) => void;
   onDelete: (key: string) => void;
 };
 
 export default function ProductList(props: Props) {
-  const { products, onDelete } = props;
+  const { products, onView, onDelete } = props;
 
   return (
-    <Table>
+    <Table striped>
       <Table.Head>
         <Table.HeadCell>Name</Table.HeadCell>
         <Table.HeadCell>Stock</Table.HeadCell>
@@ -42,12 +42,21 @@ export default function ProductList(props: Props) {
             </Table.Cell>
             <Table.Cell>
               <div>
-                <Badge color={getColorFromStatus(product.status)}>{getTextFromStatus(product.status)}</Badge>
+                <Badge
+                  color={getColorFromStatus(product.status)}
+                  className="inline font-bold"
+                >
+                  {getTextFromStatus(product.status)}
+                </Badge>
               </div>
             </Table.Cell>
             <Table.Cell>
               <div className="flex gap-2">
-                <Button size="xs" gradientDuoTone="purpleToBlue">
+                <Button
+                  size="xs"
+                  gradientDuoTone="purpleToBlue"
+                  onClick={() => onView(product.key)}
+                >
                   View
                 </Button>
                 <Button

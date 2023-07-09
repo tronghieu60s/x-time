@@ -2,9 +2,10 @@ import {
   getProducts,
   updateProduct,
 } from "@/features/products/common/database";
-import puppeteer from "puppeteer";
+import puppeteer, { Browser } from "puppeteer";
 import { getProductCart, getProductDetail, isLogin } from "./crawler";
 import _ from "lodash";
+import { ProductType } from "@/features/products/common/types";
 
 const {
   SHOPEE_URL = "https://shopee.vn",
@@ -61,7 +62,80 @@ export const syncCartProducts = async () => {
   await browser.close();
 };
 
-export const updateProductsDetail = async () => {
+export const updateProductsDetail = async (product: ProductType, browser: Browser) => {
+  const { key, itemid, shopid, models: modelsDetail = [] } = product;
+  let { lowestPrice = 0, highestPrice = 0 } = product;
+  const path = `${SHOPEE_URL}/A-i.${shopid}.${itemid}`;
+
+  updateProduct({ key, status: "processing" });
+
+  try {
+    const productDetail = await getProductDetail(path, browser);
+    if (!productDetail) {
+      updateProduct({
+        key,
+        status: "failure",
+        logs: `${new Date().toLocaleString()}\nProduct not found. Please try again later.`,
+      });
+      return;
+    }
+
+    const {
+      itemid,
+      name,
+      price,
+      stock,
+      models: newModels,
+      variations,
+      ratingStars,
+      jsonData,
+    } = productDetail;
+
+    const models = newModels.map((model) => {
+      const { modelid, name, price, stock } = model;
+      const findModel = modelsDetail.find((model) => model.modelid === modelid);
+      let { lowestPrice = 0, highestPrice = 0 } = findModel || {};
+
+      if (!lowestPrice || price < lowestPrice) lowestPrice = price;
+      if (!highestPrice || price > highestPrice) highestPrice = price;
+
+      return {
+        modelid,
+        name,
+        price,
+        stock,
+        lowestPrice,
+        highestPrice,
+      };
+    });
+
+    if (!lowestPrice || price < lowestPrice) lowestPrice = price;
+    if (!highestPrice || price > highestPrice) highestPrice = price;
+
+    updateProduct({
+      key,
+      itemid,
+      name,
+      price,
+      stock,
+      models,
+      variations,
+      lowestPrice,
+      highestPrice,
+      ratingStars,
+      status: "success",
+      jsonData,
+    });
+  } catch (error) {
+    updateProduct({
+      key,
+      status: "failure",
+      logs: `${new Date().toLocaleString()}\n${error}`,
+    });
+  }
+};
+
+export const updateProductsDetails = async () => {
   const browser = await browserShopee;
 
   const products = await getProducts();
@@ -69,82 +143,7 @@ export const updateProductsDetail = async () => {
   const productsChunks = _.chunk(products, 5);
   for (const productsChunk of productsChunks) {
     await Promise.all(
-      productsChunk.map(async (product) => {
-        if (!browser) {
-          return null;
-        }
-        const { key, itemid, shopid, models: modelsDetail } = product;
-        let { lowestPrice = 0, highestPrice = 0 } = product;
-        const path = `${SHOPEE_URL}/A-i.${shopid}.${itemid}`;
-
-        updateProduct({ key, status: "processing" });
-
-        try {
-          const productDetail = await getProductDetail(path, browser);
-
-          if (!productDetail) {
-            updateProduct({
-              key,
-              status: "failure",
-              logs: `${new Date().toLocaleString()}\nProduct not found. Please try again later.`,
-            });
-            return;
-          }
-
-          const {
-            itemid,
-            name,
-            price,
-            stock,
-            models: newModels,
-            variations,
-            ratingStars,
-            jsonData,
-          } = productDetail;
-
-          const models = newModels.map((model) => {
-            const { modelid, name, price, stock } = model;
-            const findModel = modelsDetail.find((model) => model.modelid === modelid);
-            let { lowestPrice = 0, highestPrice = 0 } = findModel || {};
-
-            if (!lowestPrice || price < lowestPrice) lowestPrice = price;
-            if (!highestPrice || price > highestPrice) highestPrice = price;
-
-            return {
-              modelid,
-              name,
-              price,
-              stock,
-              lowestPrice,
-              highestPrice,
-            };
-          });
-
-          if (!lowestPrice || price < lowestPrice) lowestPrice = price;
-          if (!highestPrice || price > highestPrice) highestPrice = price;
-
-          updateProduct({
-            key,
-            itemid,
-            name,
-            price,
-            stock,
-            models,
-            variations,
-            lowestPrice,
-            highestPrice,
-            ratingStars,
-            status: "success",
-            jsonData,
-          });
-        } catch (error) {
-          updateProduct({
-            key,
-            status: "failure",
-            logs: `${new Date().toLocaleString()}\n${error}`,
-          });
-        }
-      })
+      productsChunk.map((product) => updateProductsDetail(product, browser))
     );
   }
 

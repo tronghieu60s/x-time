@@ -48,7 +48,7 @@ export type UpdateProductType = {
   lowestPrice?: number;
   highestPrice?: number;
   ratingStars?: number;
-  status: ProductStatusType;
+  status?: ProductStatusType;
   logs?: string;
   jsonData?: string;
 };
