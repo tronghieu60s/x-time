@@ -1,8 +1,8 @@
 export type ProductStatusType =
+  | "success"
+  | "failure"
   | "pending"
   | "processing"
-  | "success"
-  | "failure";
 
 export type ProductModelType = {
   modelid: number;
@@ -36,23 +36,10 @@ export type ProductType = {
   jsonData: string;
 };
 
-export type CreateProductType = {
-  itemid: number;
-  shopid: number;
-  name?: string;
-  price?: number;
-  stock?: number;
-  models?: ProductModelType[];
-  variations?: ProductVariationType[];
-  lowestPrice?: number;
-  highestPrice?: number;
-  ratingStars?: number;
-  status: ProductStatusType;
-  logs?: string;
-  jsonData?: string;
-};
-
 export type UpdateProductType = {
+  key?: string;
+  itemid?: number;
+  shopid?: number;
   name?: string;
   price?: number;
   stock?: number;

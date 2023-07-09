@@ -1,3 +1,4 @@
+import { objectToArray } from "@/core/commonFuncs";
 import { database } from "@/core/lib/firebase";
 import {
   child,
@@ -10,47 +11,52 @@ import {
   set,
   update,
 } from "firebase/database";
-import { CreateProductType, ProductType, UpdateProductType } from "./types";
-import { objectToArray } from "@/core/commonFuncs";
+import { ProductType, UpdateProductType } from "./types";
 
 export const productsRef = ref(database, "products");
 
 export const getProducts = async (): Promise<ProductType[]> => {
   return new Promise(async (resolve) => {
     const products = await get(productsRef);
-    if (!products.exists()) resolve([]);
+    if (!products.exists()) {
+      resolve([]);
+      return;
+    }
 
     const data = objectToArray(products.val() || {});
     resolve(data.reverse());
   });
 };
 
-export const createProduct = async (
-  product: CreateProductType
-): Promise<boolean> => {
-  const { itemid } = product;
+export const updateProduct = async (product: UpdateProductType) => {
+  const { key } = product;
   return new Promise(async (resolve) => {
-    const productRef = await get(
-      query(productsRef, orderByChild("itemid"), equalTo(itemid))
-    );
-    if (productRef.exists()) resolve(false);
+    if (key) {
+      update(child(productsRef, key), product);
+      resolve(true);
+      return;
+    }
 
-    push(productsRef, product);
-    resolve(true);
+    const { itemid } = product;
+    if (itemid) {
+      const productRef = await get(
+        query(productsRef, orderByChild("itemid"), equalTo(itemid))
+      );
+      if (productRef.exists()) {
+        resolve(false);
+        return;
+      }
+
+      push(productsRef, product);
+      resolve(true);
+      return;
+    }
+
+    resolve(false);
   });
 };
 
-export const updateProduct = async (
-  key: string,
-  product: UpdateProductType
-): Promise<boolean> => {
-  return new Promise((resolve) => {
-    update(child(productsRef, key), product);
-    resolve(true);
-  });
-};
-
-export const deleteProduct = async (key: string): Promise<boolean> => {
+export const deleteProduct = async (key: string) => {
   return new Promise((resolve) => {
     set(child(productsRef, key), null);
     resolve(true);
