@@ -29,7 +29,7 @@ export default function ProductList(props: Props) {
             key={product.itemid}
             className="bg-white dark:border-gray-700 dark:bg-gray-800"
           >
-            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+            <Table.Cell className="whitespace-normal font-medium text-gray-900 dark:text-white">
               {product.name || "--- Unknown ---"}
             </Table.Cell>
             <Table.Cell>{product.stock || 0}</Table.Cell>

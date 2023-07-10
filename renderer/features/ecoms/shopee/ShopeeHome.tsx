@@ -79,7 +79,7 @@ export default function ShopeeHome() {
 
   const productSelected = useMemo(
     () => products.find((product) => product.key === productKeySelected),
-    [productKeySelected]
+    [products, productKeySelected]
   );
 
   const onFollowProductModel = useCallback(
@@ -102,16 +102,13 @@ export default function ShopeeHome() {
 
   const onUnFollowProductModel = useCallback(
     (model: string) => {
-      console.log(productSelected);
-      
       if (!productSelected) return;
 
       const { key, models } = productSelected || {};
       const findModeIndex = models.findIndex(
         (selected) => selected.name === model
       );
-      console.log(findModeIndex);
-      
+
       if (findModeIndex === -1) return;
 
       if (models[findModeIndex].isFollow) {
@@ -125,13 +122,12 @@ export default function ShopeeHome() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between gap-2">
+        <div className="flex items-center gap-4">
+          <Button size="sm" onClick={onTestLogin} outline={clickedLogin}>
+            {clickedLogin ? (isLogged ? "Logged" : "Not Logged") : "Test Login"}
+          </Button>
+        </div>
         <form className="flex items-center gap-4">
-          <Button size="sm" onClick={onSyncCart}>
-            Sync Cart
-          </Button>
-          <Button size="sm" onClick={onUpdateProducts}>
-            Update Products
-          </Button>
           <div className="flex items-center gap-2">
             <TextInput
               type="text"
@@ -145,11 +141,6 @@ export default function ShopeeHome() {
             </Button>
           </div>
         </form>
-        <div className="flex items-center gap-4">
-          <Button size="sm" onClick={onTestLogin} outline={clickedLogin}>
-            {clickedLogin ? (isLogged ? "Logged" : "Not Logged") : "Test Login"}
-          </Button>
-        </div>
       </div>
       <ProductList
         products={products}

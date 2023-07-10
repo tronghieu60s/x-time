@@ -1,4 +1,4 @@
-import Drawer from "@/app/flowbite/Drawer";
+import Drawer from "@/app/components/Drawer";
 import { formatCurrency } from "@/core/commonFuncs";
 import {
   Badge,
@@ -51,7 +51,7 @@ export default function ProductListDetail(props: Props) {
 
   const onUnFollowModel = useCallback((model: string) => {
     onUnFollowProductModel(model);
-  }, []);
+  }, [onUnFollowProductModel]);
 
   if (!product) return null;
 
