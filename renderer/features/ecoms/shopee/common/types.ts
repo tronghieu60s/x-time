@@ -1,15 +1,20 @@
+export type ShopeeSettingType = {
+  chromePath?: string;
+  chromeHeadless?: boolean;
+}
+
 export type ResponseShopeeProduct = {
   itemid: number;
   name: string;
   price: number;
   stock: number;
-  models: {
+  models?: {
     modelid: number;
     name: string;
     price: number;
     stock: number;
   }[];
-  tier_variations: {
+  tier_variations?: {
     name: string;
     options: string[];
   }[];

@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.14",
-    "axios": "^1.2.3",
     "electron-is-dev": "^1.1.0",
     "electron-serve": "^1.1.0",
     "electron-store": "^8.1.0",

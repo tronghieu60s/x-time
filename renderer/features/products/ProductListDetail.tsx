@@ -13,7 +13,7 @@ import { useFormik } from "formik";
 import { getColorFromStatus, getTextFromStatus } from "./common";
 import { initialValues } from "./common/formik";
 import { ProductType } from "./common/types";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 const customTableTheme: CustomFlowbiteTheme["table"] = {
   root: {
@@ -29,7 +29,8 @@ type Props = {
 };
 
 export default function ProductListDetail(props: Props) {
-  const { product, onClose, onFollowProductModel, onUnFollowProductModel } = props;
+  const { product, onClose, onFollowProductModel, onUnFollowProductModel } =
+    props;
 
   const formikBag = useFormik({
     initialValues,
@@ -44,14 +45,25 @@ export default function ProductListDetail(props: Props) {
 
   const onFollowModel = useCallback(() => {
     const { model } = formikBag.values;
-    if (model.length !== product?.variations.length) return;
+    if (model.length !== product?.variations?.length) return;
 
     onFollowProductModel(model.join(","));
   }, [formikBag.values, onFollowProductModel]);
 
-  const onUnFollowModel = useCallback((model: string) => {
-    onUnFollowProductModel(model);
-  }, [onUnFollowProductModel]);
+  const onUnFollowModel = useCallback(
+    (model: string) => {
+      onUnFollowProductModel(model);
+    },
+    [onUnFollowProductModel]
+  );
+
+  const variations = useMemo(() => {
+    if (product?.variations?.length === 1) {
+      const options = product.variations[0].options.filter((option) => option);
+      if (options.length === 0) return [];
+    }
+    return product?.variations || [];
+  }, [product?.variations]);
 
   if (!product) return null;
 
@@ -99,9 +111,9 @@ export default function ProductListDetail(props: Props) {
         <div className="grid grid-cols-2 gap-4 col-span-2">
           <div className="col-span-2">
             <div className="flex gap-4">
-              {product.variations.map((variation, index) => (
+              {variations?.map((variation, index) => (
                 <div key={index} className="flex flex-col gap-2">
-                  <div>{variation.name}:</div>
+                  {variation.name && <div>{variation.name}:</div>}
                   <div className="flex flex-wrap gap-2">
                     {variation.options.map((option, jIndex) => (
                       <div
@@ -125,15 +137,17 @@ export default function ProductListDetail(props: Props) {
                 </div>
               ))}
             </div>
-            <Button
-              size="sm"
-              gradientDuoTone="purpleToBlue"
-              className="mt-5"
-              onClick={onFollowModel}
-              disabled={product.models.length === 0}
-            >
-              Add Model
-            </Button>
+            {variations.length > 0 && (
+              <Button
+                size="sm"
+                gradientDuoTone="purpleToBlue"
+                className="mt-5"
+                onClick={onFollowModel}
+                disabled={product?.models?.length === 0}
+              >
+                Add Model
+              </Button>
+            )}
           </div>
           <div className="col-span-2">
             <div className="relative">
@@ -147,7 +161,7 @@ export default function ProductListDetail(props: Props) {
                   <Table.HeadCell>Action</Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
-                  {product.models
+                  {product?.models
                     ?.filter((model) => model.isFollow)
                     .map((model) => (
                       <Table.Row

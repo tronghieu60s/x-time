@@ -5,6 +5,7 @@
         "itemid",
         "modelid",
         "shopee",
-        "shopid"
+        "shopid",
+        "soldout"
     ]
 }

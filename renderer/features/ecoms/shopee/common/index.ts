@@ -15,13 +15,13 @@ export const getProductInfoFromPath = (path: string) => {
     const name = response.name;
     const price = response.price / 100000;
     const stock = response.stock;
-    const models = response.models.map((model: any) => ({
+    const models = response.models?.map((model: any) => ({
       modelid: model.modelid,
       name: model.name,
       price: model.price / 100000,
       stock: model.stock,
     }));
-    const variations = response.tier_variations.map((variation: any) => ({
+    const variations = response.tier_variations?.map((variation: any) => ({
       name: variation.name,
       options: variation.options,
     }));

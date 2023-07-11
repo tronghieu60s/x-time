@@ -26,8 +26,8 @@ export type ProductType = {
   name: string;
   price: number;
   stock: number;
-  models: ProductModelType[];
-  variations: ProductVariationType[];
+  models?: ProductModelType[];
+  variations?: ProductVariationType[];
   lowestPrice?: number;
   highestPrice?: number;
   ratingStars: number;

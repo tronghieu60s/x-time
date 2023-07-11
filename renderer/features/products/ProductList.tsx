@@ -3,12 +3,12 @@ import { Badge, Button, Table } from "flowbite-react";
 import { getColorFromStatus, getTextFromStatus } from "./common";
 import { ProductType } from "./common/types";
 
-const statusDisabled = ["pending", "processing"]
+const statusDisabled = ["pending", "processing"];
 
 type Props = {
   products: ProductType[];
   onView: (key: string) => void;
-  onDelete: (key: string) => void;
+  onDelete?: (key: string) => void;
 };
 
 export default function ProductList(props: Props) {
@@ -62,13 +62,15 @@ export default function ProductList(props: Props) {
                 >
                   View
                 </Button>
-                <Button
-                  size="xs"
-                  gradientDuoTone="pinkToOrange"
-                  onClick={() => onDelete(product.key)}
-                >
-                  Delete
-                </Button>
+                {onDelete && (
+                  <Button
+                    size="xs"
+                    gradientDuoTone="pinkToOrange"
+                    onClick={() => onDelete(product.key)}
+                  >
+                    Delete
+                  </Button>
+                )}
               </div>
             </Table.Cell>
           </Table.Row>

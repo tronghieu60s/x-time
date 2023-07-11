@@ -2,6 +2,7 @@ import { Modal, Button, Tabs } from "flowbite-react";
 import ShopeeHome from "./ecoms/shopee/ShopeeHome";
 import AuthLogin from "./auth/AuthLogin";
 import { useState } from "react";
+import ShopeePromotion from "./ecoms/shopee/ShopeePromotion";
 
 export default function HomeFeature() {
   const [isShowLogin, setIsShowLogin] = useState(false);
@@ -25,6 +26,7 @@ export default function HomeFeature() {
             <ShopeeHome />
           </Tabs.Item>
           <Tabs.Item title="Shopee Promotion">
+            <ShopeePromotion />
           </Tabs.Item>
         </Tabs.Group>
       </div>

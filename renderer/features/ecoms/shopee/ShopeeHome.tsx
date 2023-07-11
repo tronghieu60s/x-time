@@ -7,14 +7,17 @@ import {
 } from "@/features/products/common/database";
 import { ProductType } from "@/features/products/common/types";
 import { onValue } from "firebase/database";
-import { Button, TextInput } from "flowbite-react";
+import { Button, Modal, TextInput } from "flowbite-react";
 import { useFormik } from "formik";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { initialValues } from "./common/formik";
 import ProductListDetail from "@/features/products/ProductListDetail";
+import { Settings } from "react-feather";
+import ShopeeSetting from "./ShopeeSetting";
 
 export default function ShopeeHome() {
   const [isLogged, setIsLogged] = useState(false);
+  const [isShowSetting, setIsShowSetting] = useState(false);
   const [clickedLogin, setClickedLogin] = useState(false);
   const [products, setProducts] = useState<ProductType[]>([]);
   const [productKeySelected, setProductKeySelected] = useState<string | null>(
@@ -39,8 +42,8 @@ export default function ShopeeHome() {
     });
   }, []);
 
-  const onUpdateProducts = useCallback(() => {
-    fetch("/api/ecoms/shopee/products/update", { method: "PATCH" }).then(
+  const onScanProducts = useCallback(() => {
+    fetch("/api/ecoms/shopee/products/scan", { method: "PATCH" }).then(
       (res) => {
         console.log(res);
       }
@@ -86,7 +89,7 @@ export default function ShopeeHome() {
     (model: string) => {
       if (!productSelected) return;
 
-      const { key, models } = productSelected || {};
+      const { key, models = [] } = productSelected || {};
       const findModeIndex = models.findIndex(
         (selected) => selected.name === model
       );
@@ -104,7 +107,7 @@ export default function ShopeeHome() {
     (model: string) => {
       if (!productSelected) return;
 
-      const { key, models } = productSelected || {};
+      const { key, models = [] } = productSelected || {};
       const findModeIndex = models.findIndex(
         (selected) => selected.name === model
       );
@@ -129,8 +132,8 @@ export default function ShopeeHome() {
           <Button size="sm" onClick={onSyncCart}>
             Sync Cart
           </Button>
-          <Button size="sm" onClick={onUpdateProducts}>
-            Update Products
+          <Button size="sm" onClick={onScanProducts}>
+            Scan Products
           </Button>
         </div>
         <form className="flex items-center gap-4">
@@ -144,6 +147,9 @@ export default function ShopeeHome() {
             />
             <Button size="sm" onClick={onAddProduct}>
               Add Product
+            </Button>
+            <Button size="sm" onClick={() => setIsShowSetting(true)}>
+              <Settings size={20} />
             </Button>
           </div>
         </form>
@@ -159,6 +165,12 @@ export default function ShopeeHome() {
         onFollowProductModel={onFollowProductModel}
         onUnFollowProductModel={onUnFollowProductModel}
       />
+      <Modal show={isShowSetting} onClose={() => setIsShowSetting(false)}>
+        <Modal.Header>Settings</Modal.Header>
+        <Modal.Body>
+          <ShopeeSetting onClose={() => setIsShowSetting(false)} />
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
