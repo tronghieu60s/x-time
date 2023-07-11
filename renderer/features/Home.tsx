@@ -16,13 +16,15 @@ export default function HomeFeature() {
           <Modal show={isShowLogin} onClose={() => setIsShowLogin(false)}>
             <Modal.Header>Login</Modal.Header>
             <Modal.Body>
-              <AuthLogin />
+              <AuthLogin onCancel={() => setIsShowLogin(false)} />
             </Modal.Body>
           </Modal>
         </div>
         <Tabs.Group aria-label="Default tabs" style="default">
-          <Tabs.Item active title="Shopee">
+          <Tabs.Item active title="Shopee Detect">
             <ShopeeHome />
+          </Tabs.Item>
+          <Tabs.Item title="Shopee Promotion">
           </Tabs.Item>
         </Tabs.Group>
       </div>

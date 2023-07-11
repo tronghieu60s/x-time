@@ -3,6 +3,8 @@ import { Badge, Button, Table } from "flowbite-react";
 import { getColorFromStatus, getTextFromStatus } from "./common";
 import { ProductType } from "./common/types";
 
+const statusDisabled = ["pending", "processing"]
+
 type Props = {
   products: ProductType[];
   onView: (key: string) => void;
@@ -56,6 +58,7 @@ export default function ProductList(props: Props) {
                   size="xs"
                   gradientDuoTone="purpleToBlue"
                   onClick={() => onView(product.key)}
+                  disabled={statusDisabled.includes(product.status)}
                 >
                   View
                 </Button>

@@ -48,7 +48,7 @@ export default function ShopeeHome() {
   }, []);
 
   const onTestLogin = useCallback(() => {
-    fetch("/api/ecoms/auth/test-login", { method: "POST" })
+    fetch("/api/ecoms/shopee/auth/test-login", { method: "POST" })
       .then((res) => res.json())
       .then((res) => {
         const { logged = false } = res;
@@ -125,6 +125,12 @@ export default function ShopeeHome() {
         <div className="flex items-center gap-4">
           <Button size="sm" onClick={onTestLogin} outline={clickedLogin}>
             {clickedLogin ? (isLogged ? "Logged" : "Not Logged") : "Test Login"}
+          </Button>
+          <Button size="sm" onClick={onSyncCart}>
+            Sync Cart
+          </Button>
+          <Button size="sm" onClick={onUpdateProducts}>
+            Update Products
           </Button>
         </div>
         <form className="flex items-center gap-4">

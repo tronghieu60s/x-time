@@ -47,7 +47,7 @@ export default function ProductListDetail(props: Props) {
     if (model.length !== product?.variations.length) return;
 
     onFollowProductModel(model.join(","));
-  }, [formikBag.values]);
+  }, [formikBag.values, onFollowProductModel]);
 
   const onUnFollowModel = useCallback((model: string) => {
     onUnFollowProductModel(model);

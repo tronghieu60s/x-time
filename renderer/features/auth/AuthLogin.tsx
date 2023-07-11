@@ -1,4 +1,4 @@
-import { Button, Label, TextInput } from "flowbite-react";
+import { Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useFormik } from "formik";
 import { initialValues } from "./common/formik";
 import { useCallback, useState } from "react";
@@ -7,6 +7,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "@/core/lib/firebase";
+import { delay } from "lodash";
 
 type Props = {
   onCancel: () => void;
@@ -14,10 +15,14 @@ type Props = {
 
 export default function AuthLogin(props: Props) {
   const { onCancel } = props;
+  const [isLoading, setIsLoading] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
 
   const onSubmit = useCallback((values) => {
     const { email, password, rePassword } = values;
+
+    setIsLoading(true);
+
     if (isRegister) {
       if (password !== rePassword) {
         return;
@@ -28,6 +33,7 @@ export default function AuthLogin(props: Props) {
         .catch((error) => {
           alert(error.message);
         });
+      setIsLoading(false);
       return;
     }
 
@@ -36,6 +42,7 @@ export default function AuthLogin(props: Props) {
       .catch((error) => {
         alert(error.message);
       });
+    setIsLoading(false);
   }, []);
 
   const formikBag = useFormik({
@@ -92,7 +99,10 @@ export default function AuthLogin(props: Props) {
           </Button>
         </div>
         <div className="flex gap-2">
-          <Button type="submit">{isRegister ? "Register" : "Login"}</Button>
+          <Button type="submit">
+            {isLoading && <Spinner size="sm" />}
+            {!isLoading && <span>{isRegister ? "Register" : "Login"}</span>}
+          </Button>
           <Button color="gray" onClick={onCancel}>
             Cancel
           </Button>
