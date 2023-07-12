@@ -8,11 +8,14 @@ import _ from "lodash";
 import { ProductType } from "@/features/products/common/types";
 import { getSettings } from "./database";
 import { getProductInfoFromResponse } from ".";
+import { v4 as uuidv4 } from "uuid";
 
 const {
   SHOPEE_URL = "https://shopee.vn",
   SHOPEE_LOGIN_URL = "https://shopee.vn/buyer/login",
-  SHOPEE_PROMOTIONS_API_URL = "https://shopee.vn/api/v4/flash_sale/flash_sale_get_items",
+  SHOPEE_PROMOTIONS_URL = "https://shopee.vn/api/v4/flash_sale/get_all_sessions",
+  SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL = "https://shopee.vn/api/v4/flash_sale/get_all_itemids",
+  SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL = "https://shopee.vn/api/v4/flash_sale/flash_sale_batch_get_items",
 } = process.env;
 
 const LOGIN_ALERT =
@@ -172,12 +175,49 @@ export const scanProductsDetails = async () => {
   await browser.close();
 };
 
-export const getProductsPromotion = async () => {
+export const getPromotions = async () => {
+  const promotions = await fetch(
+    `${SHOPEE_PROMOTIONS_URL}?category_personalization_type=1`
+  ).then((res) => res.json()).then((res) => res.data);
+
+  
+
+};
+
+export const getProductsPromotion = async (page: number, limit: number) => {
   const promotion = await fetch(
-    `${SHOPEE_PROMOTIONS_API_URL}?limit=100&sort_soldout=true&with_dp_items=true`
-  ).then((res) => res.json());
-  const products = promotion.data.items.map((item) =>
-    getProductInfoFromResponse(item)
-  );
-  return products;
+    `${SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL}?promotionid=159639415230465&sort_soldout=true`
+  ).then((res) => res.json()).then((res) => res.data);
+
+  const productIds = promotion.item_brief_list.map((item) => item.itemid);
+
+  const products: any = [];
+  const productIdsChunks = _.chunk(productIds, limit).slice(page - 1, page);
+  for (const productIdsChunk of productIdsChunks) {
+    const body = {
+      limit,
+      itemids: productIdsChunk,
+      promotionid: 159639415230465,
+      with_dp_items: true,
+    };
+
+    const items = await fetch(SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    }).then((res) => res.json());
+
+    products.push(...items.data.items);
+  }
+
+  const productsInfo = products.map((product) => ({
+    key: uuidv4,
+    ...getProductInfoFromResponse(product),
+    status: "success",
+  }));
+
+  return {
+    total: productIds.length,
+    products: productsInfo,
+  };
 };
