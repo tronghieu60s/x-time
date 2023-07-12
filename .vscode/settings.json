@@ -3,9 +3,12 @@
         "ecoms",
         "flowbite",
         "itemid",
+        "itemids",
         "modelid",
+        "promotionid",
         "shopee",
         "shopid",
-        "soldout"
+        "soldout",
+        "uuidv"
     ]
 }

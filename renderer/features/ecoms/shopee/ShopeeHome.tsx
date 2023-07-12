@@ -15,6 +15,10 @@ import ProductListDetail from "@/features/products/ProductListDetail";
 import { Settings } from "react-feather";
 import ShopeeSetting from "./ShopeeSetting";
 
+const apiSyncCart = "/api/ecoms/shopee/cart/sync";
+const apiScanProducts = "/api/ecoms/shopee/products/scan";
+const apiTestLogin = "/api/ecoms/shopee/auth/test-login";
+
 export default function ShopeeHome() {
   const [isLogged, setIsLogged] = useState(false);
   const [isShowSetting, setIsShowSetting] = useState(false);
@@ -37,21 +41,19 @@ export default function ShopeeHome() {
   });
 
   const onSyncCart = useCallback(() => {
-    fetch("/api/ecoms/shopee/cart/sync", { method: "POST" }).then((res) => {
+    fetch(apiSyncCart, { method: "POST" }).then((res) => {
       console.log(res);
     });
   }, []);
 
   const onScanProducts = useCallback(() => {
-    fetch("/api/ecoms/shopee/products/scan", { method: "PATCH" }).then(
-      (res) => {
-        console.log(res);
-      }
-    );
+    fetch(apiScanProducts, { method: "PATCH" }).then((res) => {
+      console.log(res);
+    });
   }, []);
 
   const onTestLogin = useCallback(() => {
-    fetch("/api/ecoms/shopee/auth/test-login", { method: "POST" })
+    fetch(apiTestLogin, { method: "POST" })
       .then((res) => res.json())
       .then((res) => {
         const { logged = false } = res;

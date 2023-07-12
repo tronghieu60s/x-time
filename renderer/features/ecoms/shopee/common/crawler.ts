@@ -41,10 +41,7 @@ export const getCartDetail = async (browser: Browser) => {
       return await fetch(apiUrl, {
         method: "POST",
         body: JSON.stringify(cartBody),
-        headers: {
-          accept: "application/json",
-          "content-type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       })
         .then((res) => res.json())
         .then((res) => res.data);

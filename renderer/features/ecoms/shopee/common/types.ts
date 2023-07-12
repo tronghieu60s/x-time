@@ -5,6 +5,7 @@ export type ShopeeSettingType = {
 
 export type ResponseShopeeProduct = {
   itemid: number;
+  shopid?: number;
   name: string;
   price: number;
   stock: number;
