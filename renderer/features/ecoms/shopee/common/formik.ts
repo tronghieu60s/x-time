@@ -1,8 +1,8 @@
 export const initialValues = {
-  path: "",
+  path: '',
 };
 
 export const initialValuesSetting = {
-  chromePath: "",
+  chromePath: '',
   chromeHeadless: true,
 };

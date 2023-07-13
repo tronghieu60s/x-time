@@ -1,25 +1,21 @@
-import {
-  getProducts,
-  updateProduct,
-} from "@/features/products/common/database";
-import puppeteer, { Browser } from "puppeteer";
-import { getProductCart, getProductDetail, isLogin } from "./crawler";
-import _ from "lodash";
-import { ProductType } from "@/features/products/common/types";
-import { getSettings } from "./database";
-import { getProductInfoFromResponse } from ".";
-import { v4 as uuidv4 } from "uuid";
+import { getProducts, updateProduct } from '@/features/products/common/database';
+import puppeteer, { Browser } from 'puppeteer';
+import { getProductCart, getProductDetail, isLogin } from './crawler';
+import _ from 'lodash';
+import { ProductType } from '@/features/products/common/types';
+import { getSettings } from './database';
+import { getProductInfoFromResponse } from '.';
+import { v4 as uuidv4 } from 'uuid';
 
 const {
-  SHOPEE_URL = "https://shopee.vn",
-  SHOPEE_LOGIN_URL = "https://shopee.vn/buyer/login",
-  SHOPEE_PROMOTIONS_URL = "https://shopee.vn/api/v4/flash_sale/get_all_sessions",
-  SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL = "https://shopee.vn/api/v4/flash_sale/get_all_itemids",
-  SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL = "https://shopee.vn/api/v4/flash_sale/flash_sale_batch_get_items",
+  SHOPEE_URL = 'https://shopee.vn',
+  SHOPEE_LOGIN_URL = 'https://shopee.vn/buyer/login',
+  SHOPEE_PROMOTIONS_URL = 'https://shopee.vn/api/v4/flash_sale/get_all_sessions',
+  SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL = 'https://shopee.vn/api/v4/flash_sale/get_all_itemids',
+  SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL = 'https://shopee.vn/api/v4/flash_sale/flash_sale_batch_get_items',
 } = process.env;
 
-const LOGIN_ALERT =
-  "Please login to Shopee. Using scan QR code to login for security.";
+const LOGIN_ALERT = 'Please login to Shopee. Using scan QR code to login for security.';
 
 export const testLogin = async () => {
   const settings = await getSettings();
@@ -28,7 +24,7 @@ export const testLogin = async () => {
     headless: settings.chromeHeadless,
     executablePath: settings.chromePath,
     defaultViewport: null,
-    userDataDir: "full/user/data/shopee",
+    userDataDir: 'full/user/data/shopee',
   });
 
   const page = await browser.newPage();
@@ -63,13 +59,13 @@ export const syncCartProducts = async () => {
     headless: settings.chromeHeadless,
     executablePath: settings.chromePath,
     defaultViewport: null,
-    userDataDir: "full/user/data/shopee",
+    userDataDir: 'full/user/data/shopee',
   });
 
   const products = await getProductCart(browser);
   if (products) {
     const updateProducts = products.map((product) =>
-      updateProduct({ ...product, status: "success" })
+      updateProduct({ ...product, status: 'success' }),
     );
     await Promise.all(updateProducts);
   }
@@ -77,22 +73,19 @@ export const syncCartProducts = async () => {
   await browser.close();
 };
 
-export const scanProductsDetail = async (
-  product: ProductType,
-  browser: Browser
-) => {
+export const scanProductsDetail = async (product: ProductType, browser: Browser) => {
   const { key, itemid, shopid, models: modelsDetail = [] } = product;
   let { lowestPrice = 0, highestPrice = 0 } = product;
   const path = `${SHOPEE_URL}/A-i.${shopid}.${itemid}`;
 
-  updateProduct({ key, status: "processing" });
+  updateProduct({ key, status: 'processing' });
 
   try {
     const productDetail = await getProductDetail(path, browser);
     if (!productDetail) {
       updateProduct({
         key,
-        status: "failure",
+        status: 'failure',
         logs: `${new Date().toLocaleString()}\nProduct not found. Please try again later.`,
       });
       return;
@@ -141,13 +134,13 @@ export const scanProductsDetail = async (
       lowestPrice,
       highestPrice,
       ratingStars,
-      status: "success",
+      status: 'success',
       jsonData,
     });
   } catch (error) {
     updateProduct({
       key,
-      status: "failure",
+      status: 'failure',
       logs: `${new Date().toLocaleString()}\n${error}`,
     });
   }
@@ -160,34 +153,31 @@ export const scanProductsDetails = async () => {
     headless: settings.chromeHeadless,
     executablePath: settings.chromePath,
     defaultViewport: null,
-    userDataDir: "full/user/data/shopee",
+    userDataDir: 'full/user/data/shopee',
   });
 
   const products = await getProducts();
 
   const productsChunks = _.chunk(products, 5);
   for (const productsChunk of productsChunks) {
-    await Promise.all(
-      productsChunk.map((product) => scanProductsDetail(product, browser))
-    );
+    await Promise.all(productsChunk.map((product) => scanProductsDetail(product, browser)));
   }
 
   await browser.close();
 };
 
 export const getPromotions = async () => {
-  const promotions = await fetch(
-    `${SHOPEE_PROMOTIONS_URL}?category_personalization_type=1`
-  ).then((res) => res.json()).then((res) => res.data);
-
-  
-
+  const promotions = await fetch(`${SHOPEE_PROMOTIONS_URL}?category_personalization_type=1`)
+    .then((res) => res.json())
+    .then((res) => res.data);
 };
 
 export const getProductsPromotion = async (page: number, limit: number) => {
   const promotion = await fetch(
-    `${SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL}?promotionid=159639415230465&sort_soldout=true`
-  ).then((res) => res.json()).then((res) => res.data);
+    `${SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL}?promotionid=159639415230465&sort_soldout=true`,
+  )
+    .then((res) => res.json())
+    .then((res) => res.data);
 
   const productIds = promotion.item_brief_list.map((item) => item.itemid);
 
@@ -202,9 +192,9 @@ export const getProductsPromotion = async (page: number, limit: number) => {
     };
 
     const items = await fetch(SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify(body),
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     }).then((res) => res.json());
 
     products.push(...items.data.items);
@@ -213,7 +203,7 @@ export const getProductsPromotion = async (page: number, limit: number) => {
   const productsInfo = products.map((product) => ({
     key: uuidv4,
     ...getProductInfoFromResponse(product),
-    status: "success",
+    status: 'success',
   }));
 
   return {

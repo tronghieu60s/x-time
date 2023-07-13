@@ -1,13 +1,9 @@
-import { Button, Label, Spinner, TextInput } from "flowbite-react";
-import { useFormik } from "formik";
-import { initialValues } from "./common/formik";
-import { useCallback, useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { auth } from "@/core/lib/firebase";
-import { delay } from "lodash";
+import { Button, Label, Spinner, TextInput } from 'flowbite-react';
+import { useFormik } from 'formik';
+import { initialValues } from './common/formik';
+import { useCallback, useState } from 'react';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/core/lib/firebase';
 
 type Props = {
   onCancel: () => void;
@@ -18,32 +14,35 @@ export default function AuthLogin(props: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
 
-  const onSubmit = useCallback((values) => {
-    const { email, password, rePassword } = values;
+  const onSubmit = useCallback(
+    (values) => {
+      const { email, password, rePassword } = values;
 
-    setIsLoading(true);
+      setIsLoading(true);
 
-    if (isRegister) {
-      if (password !== rePassword) {
+      if (isRegister) {
+        if (password !== rePassword) {
+          return;
+        }
+
+        createUserWithEmailAndPassword(auth, email, password)
+          .then(() => {})
+          .catch((error) => {
+            alert(error.message);
+          });
+        setIsLoading(false);
         return;
       }
 
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((user) => {})
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {})
         .catch((error) => {
           alert(error.message);
         });
       setIsLoading(false);
-      return;
-    }
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then((user) => {})
-      .catch((error) => {
-        alert(error.message);
-      });
-    setIsLoading(false);
-  }, []);
+    },
+    [isRegister],
+  );
 
   const formikBag = useFormik({
     initialValues,
@@ -95,13 +94,13 @@ export default function AuthLogin(props: Props) {
       <div className="w-full flex justify-between pt-4">
         <div>
           <Button onClick={() => setIsRegister(!isRegister)}>
-            {isRegister ? "Login" : "Register"}
+            {isRegister ? 'Login' : 'Register'}
           </Button>
         </div>
         <div className="flex gap-2">
           <Button type="submit">
             {isLoading && <Spinner size="sm" />}
-            {!isLoading && <span>{isRegister ? "Register" : "Login"}</span>}
+            {!isLoading && <span>{isRegister ? 'Register' : 'Login'}</span>}
           </Button>
           <Button color="gray" onClick={onCancel}>
             Cancel

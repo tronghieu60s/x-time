@@ -1,8 +1,4 @@
-export type ProductStatusType =
-  | "success"
-  | "failure"
-  | "pending"
-  | "processing"
+export type ProductStatusType = 'success' | 'failure' | 'pending' | 'processing';
 
 export type ProductModelType = {
   modelid: number;

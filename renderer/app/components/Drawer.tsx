@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 type Props = {
   open: boolean;
@@ -14,10 +14,7 @@ export default function Drawer(props: Props) {
 
   return (
     <div>
-      <div
-        className="bg-gray-900 bg-opacity-50 fixed inset-0 z-30"
-        onClick={onClose}
-      />
+      <div className="bg-gray-900 bg-opacity-50 fixed inset-0 z-30" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-40 w-full p-4 overflow-y-auto transition-transform bg-white dark:bg-gray-800 transform-none">
         <h5 className="inline-flex items-center mb-4 text-base font-semibold text-gray-500 dark:text-gray-400">
           <svg
@@ -29,7 +26,7 @@ export default function Drawer(props: Props) {
           >
             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
           </svg>
-          {title || "Drawer Title"}
+          {title || 'Drawer Title'}
         </h5>
         <button
           type="button"

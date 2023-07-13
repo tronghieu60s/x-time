@@ -1,18 +1,18 @@
-import { Button, Checkbox, Label, TextInput } from "flowbite-react";
-import { useFormik } from "formik";
-import { useCallback, useEffect } from "react";
-import { initialValuesSetting } from "./common/formik";
-import { updateSetting } from "./common/database";
+import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import { useFormik } from 'formik';
+import { useCallback, useEffect } from 'react';
+import { initialValuesSetting } from './common/formik';
+import { updateSetting } from './common/database';
 
 type Props = {
   onClose: () => void;
-}
+};
 
 export default function ShopeeSetting(props: Props) {
   const { onClose } = props;
 
   const onSubmit = useCallback((values) => {
-    localStorage.setItem("shopee-setting", JSON.stringify(values));
+    localStorage.setItem('shopee-setting', JSON.stringify(values));
     updateSetting(values);
   }, []);
 
@@ -22,11 +22,11 @@ export default function ShopeeSetting(props: Props) {
   });
 
   useEffect(() => {
-    const shopeeSetting = localStorage.getItem("shopee-setting");
+    const shopeeSetting = localStorage.getItem('shopee-setting');
     if (shopeeSetting) {
       formikBag.setValues(JSON.parse(shopeeSetting));
     }
-  }, []);
+  }, [formikBag]);
 
   return (
     <form
@@ -59,7 +59,9 @@ export default function ShopeeSetting(props: Props) {
         <div></div>
         <div className="flex gap-2">
           <Button type="submit">Save</Button>
-          <Button color="gray" onClick={onClose}>Cancel</Button>
+          <Button color="gray" onClick={onClose}>
+            Cancel
+          </Button>
         </div>
       </div>
     </form>

@@ -1,11 +1,8 @@
-import { getProductsPromotion } from "@/features/ecoms/shopee/common/api";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { getProductsPromotion } from '@/features/ecoms/shopee/common/api';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method === "GET") {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'GET') {
     try {
       const page = Number(req.query.page || 1);
       const limit = Number(req.query.limit || 20);

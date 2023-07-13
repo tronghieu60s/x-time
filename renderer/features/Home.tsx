@@ -1,11 +1,18 @@
-import { Modal, Button, Tabs } from "flowbite-react";
-import ShopeeHome from "./ecoms/shopee/ShopeeHome";
-import AuthLogin from "./auth/AuthLogin";
-import { useState } from "react";
-import ShopeePromotion from "./ecoms/shopee/ShopeePromotion";
+import { Modal, Button, Tabs } from 'flowbite-react';
+import ShopeeHome from './ecoms/shopee/ShopeeHome';
+import AuthLogin from './auth/AuthLogin';
+import { useEffect, useState } from 'react';
+import ShopeePromotion from './ecoms/shopee/ShopeePromotion';
 
 export default function HomeFeature() {
   const [isShowLogin, setIsShowLogin] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log('This will run every second!');
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="container mx-auto px-2 py-4">

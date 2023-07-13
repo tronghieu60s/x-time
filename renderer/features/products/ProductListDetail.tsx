@@ -1,23 +1,15 @@
-import Drawer from "@/app/components/Drawer";
-import { formatCurrency } from "@/core/commonFuncs";
-import {
-  Badge,
-  Button,
-  CustomFlowbiteTheme,
-  Label,
-  Radio,
-  Table,
-  Textarea,
-} from "flowbite-react";
-import { useFormik } from "formik";
-import { getColorFromStatus, getTextFromStatus } from "./common";
-import { initialValues } from "./common/formik";
-import { ProductType } from "./common/types";
-import { useCallback, useEffect, useMemo } from "react";
+import Drawer from '@/app/components/Drawer';
+import { formatCurrency } from '@/core/commonFuncs';
+import { Badge, Button, CustomFlowbiteTheme, Label, Radio, Table, Textarea } from 'flowbite-react';
+import { useFormik } from 'formik';
+import { getColorFromStatus, getTextFromStatus } from './common';
+import { initialValues } from './common/formik';
+import { ProductType } from './common/types';
+import { useCallback, useEffect, useMemo } from 'react';
 
-const customTableTheme: CustomFlowbiteTheme["table"] = {
+const customTableTheme: CustomFlowbiteTheme['table'] = {
   root: {
-    shadow: "",
+    shadow: '',
   },
 };
 
@@ -29,8 +21,7 @@ type Props = {
 };
 
 export default function ProductListDetail(props: Props) {
-  const { product, onClose, onFollowProductModel, onUnFollowProductModel } =
-    props;
+  const { product, onClose, onFollowProductModel, onUnFollowProductModel } = props;
 
   const formikBag = useFormik({
     initialValues,
@@ -39,22 +30,22 @@ export default function ProductListDetail(props: Props) {
 
   useEffect(() => {
     if (product?.models) {
-      formikBag.setFieldValue("model", []);
+      formikBag.setFieldValue('model', []);
     }
-  }, [product?.models]);
+  }, [formikBag, product?.models]);
 
   const onFollowModel = useCallback(() => {
     const { model } = formikBag.values;
     if (model.length !== product?.variations?.length) return;
 
-    onFollowProductModel(model.join(","));
-  }, [formikBag.values, onFollowProductModel]);
+    onFollowProductModel(model.join(','));
+  }, [formikBag.values, onFollowProductModel, product?.variations?.length]);
 
   const onUnFollowModel = useCallback(
     (model: string) => {
       onUnFollowProductModel(model);
     },
-    [onUnFollowProductModel]
+    [onUnFollowProductModel],
   );
 
   const variations = useMemo(() => {
@@ -72,41 +63,26 @@ export default function ProductListDetail(props: Props) {
       <form className="grid grid-cols-2 gap-4 mb-6 text-base text-gray-800">
         <div>
           <div className="mb-3">
-            <Badge
-              color={getColorFromStatus(product.status)}
-              className="inline font-bold"
-            >
+            <Badge color={getColorFromStatus(product.status)} className="inline font-bold">
               {getTextFromStatus(product.status)}
             </Badge>
           </div>
           <div>
-            Name: <strong>{product.name || "--- Unknown ---"}</strong>
+            Name: <strong>{product.name || '--- Unknown ---'}</strong>
           </div>
           <div>
             Stock: <strong>{product.stock || 0}</strong>
           </div>
           <div>Rating: {product.ratingStars || 0} ⭐</div>
           <div>Price: {formatCurrency(product.price || 0)}</div>
-          <div>
-            Lowest Price:{" "}
-            {formatCurrency(product.lowestPrice || product.price || 0)}
-          </div>
-          <div>
-            Highest Price:{" "}
-            {formatCurrency(product.highestPrice || product.price || 0)}
-          </div>
+          <div>Lowest Price: {formatCurrency(product.lowestPrice || product.price || 0)}</div>
+          <div>Highest Price: {formatCurrency(product.highestPrice || product.price || 0)}</div>
         </div>
         <div>
           <div className="mb-2 block">
             <Label htmlFor="logs" value="Logs" />
           </div>
-          <Textarea
-            id="logs"
-            rows={6}
-            value={product.logs}
-            placeholder="Logs..."
-            readOnly
-          />
+          <Textarea id="logs" rows={6} value={product.logs} placeholder="Logs..." readOnly />
         </div>
         <div className="grid grid-cols-2 gap-4 col-span-2">
           <div className="col-span-2">
@@ -116,10 +92,7 @@ export default function ProductListDetail(props: Props) {
                   {variation.name && <div>{variation.name}:</div>}
                   <div className="flex flex-wrap gap-2">
                     {variation.options.map((option, jIndex) => (
-                      <div
-                        key={jIndex}
-                        className="flex items-center gap-2 mr-4"
-                      >
+                      <div key={jIndex} className="flex items-center gap-2 mr-4">
                         <Radio
                           id={`model-${index}-${jIndex}`}
                           name={`model-${index}`}
@@ -128,9 +101,7 @@ export default function ProductListDetail(props: Props) {
                             formikBag.setFieldValue(`model[${index}]`, option);
                           }}
                         />
-                        <Label htmlFor={`model-${index}-${jIndex}`}>
-                          {option}
-                        </Label>
+                        <Label htmlFor={`model-${index}-${jIndex}`}>{option}</Label>
                       </div>
                     ))}
                   </div>
@@ -169,21 +140,15 @@ export default function ProductListDetail(props: Props) {
                         className="bg-white dark:border-gray-700 dark:bg-gray-800"
                       >
                         <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                          {model.name || "--- Unknown ---"}
+                          {model.name || '--- Unknown ---'}
                         </Table.Cell>
                         <Table.Cell>{model.stock || 0}</Table.Cell>
+                        <Table.Cell>{formatCurrency(model.price || 0)}</Table.Cell>
                         <Table.Cell>
-                          {formatCurrency(model.price || 0)}
+                          {formatCurrency(model.lowestPrice || model.price || 0)}
                         </Table.Cell>
                         <Table.Cell>
-                          {formatCurrency(
-                            model.lowestPrice || model.price || 0
-                          )}
-                        </Table.Cell>
-                        <Table.Cell>
-                          {formatCurrency(
-                            model.highestPrice || model.price || 0
-                          )}
+                          {formatCurrency(model.highestPrice || model.price || 0)}
                         </Table.Cell>
                         <Table.Cell>
                           <div className="flex gap-2">

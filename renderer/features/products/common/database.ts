@@ -1,5 +1,5 @@
-import { objectToArray } from "@/core/commonFuncs";
-import { database } from "@/core/lib/firebase";
+import { objectToArray } from '@/core/commonFuncs';
+import { database } from '@/core/lib/firebase';
 import {
   child,
   equalTo,
@@ -10,10 +10,10 @@ import {
   ref,
   set,
   update,
-} from "firebase/database";
-import { ProductType, UpdateProductType } from "./types";
+} from 'firebase/database';
+import { ProductType, UpdateProductType } from './types';
 
-export const productsRef = ref(database, "products");
+export const productsRef = ref(database, 'products');
 
 export const getProducts = async (): Promise<ProductType[]> => {
   return new Promise(async (resolve) => {
@@ -39,9 +39,7 @@ export const updateProduct = async (product: UpdateProductType) => {
 
     const { itemid } = product;
     if (itemid) {
-      const productRef = await get(
-        query(productsRef, orderByChild("itemid"), equalTo(itemid))
-      );
+      const productRef = await get(query(productsRef, orderByChild('itemid'), equalTo(itemid)));
       if (productRef.exists()) {
         resolve(false);
         return;

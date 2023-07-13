@@ -1,32 +1,26 @@
-import { objectToArray } from "@/core/commonFuncs";
-import ProductList from "@/features/products/ProductList";
-import {
-  deleteProduct,
-  productsRef,
-  updateProduct,
-} from "@/features/products/common/database";
-import { ProductType } from "@/features/products/common/types";
-import { onValue } from "firebase/database";
-import { Button, Modal, TextInput } from "flowbite-react";
-import { useFormik } from "formik";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { initialValues } from "./common/formik";
-import ProductListDetail from "@/features/products/ProductListDetail";
-import { Settings } from "react-feather";
-import ShopeeSetting from "./ShopeeSetting";
+import { objectToArray } from '@/core/commonFuncs';
+import ProductList from '@/features/products/ProductList';
+import { deleteProduct, productsRef, updateProduct } from '@/features/products/common/database';
+import { ProductType } from '@/features/products/common/types';
+import { onValue } from 'firebase/database';
+import { Button, Modal, TextInput } from 'flowbite-react';
+import { useFormik } from 'formik';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { initialValues } from './common/formik';
+import ProductListDetail from '@/features/products/ProductListDetail';
+import { Settings } from 'react-feather';
+import ShopeeSetting from './ShopeeSetting';
 
-const apiSyncCart = "/api/ecoms/shopee/cart/sync";
-const apiScanProducts = "/api/ecoms/shopee/products/scan";
-const apiTestLogin = "/api/ecoms/shopee/auth/test-login";
+const apiSyncCart = '/api/ecoms/shopee/cart/sync';
+const apiScanProducts = '/api/ecoms/shopee/products/scan';
+const apiTestLogin = '/api/ecoms/shopee/auth/test-login';
 
 export default function ShopeeHome() {
   const [isLogged, setIsLogged] = useState(false);
   const [isShowSetting, setIsShowSetting] = useState(false);
   const [clickedLogin, setClickedLogin] = useState(false);
   const [products, setProducts] = useState<ProductType[]>([]);
-  const [productKeySelected, setProductKeySelected] = useState<string | null>(
-    null
-  );
+  const [productKeySelected, setProductKeySelected] = useState<string | null>(null);
 
   useEffect(() => {
     onValue(productsRef, async (snapshot) => {
@@ -41,19 +35,19 @@ export default function ShopeeHome() {
   });
 
   const onSyncCart = useCallback(() => {
-    fetch(apiSyncCart, { method: "POST" }).then((res) => {
+    fetch(apiSyncCart, { method: 'POST' }).then((res) => {
       console.log(res);
     });
   }, []);
 
   const onScanProducts = useCallback(() => {
-    fetch(apiScanProducts, { method: "PATCH" }).then((res) => {
+    fetch(apiScanProducts, { method: 'PATCH' }).then((res) => {
       console.log(res);
     });
   }, []);
 
   const onTestLogin = useCallback(() => {
-    fetch(apiTestLogin, { method: "POST" })
+    fetch(apiTestLogin, { method: 'POST' })
       .then((res) => res.json())
       .then((res) => {
         const { logged = false } = res;
@@ -64,14 +58,14 @@ export default function ShopeeHome() {
 
   const onAddProduct = useCallback(async () => {
     const { path } = formikBag.values;
-    formikBag.setFieldValue("path", "");
+    formikBag.setFieldValue('path', '');
 
-    const rootPath = path.split("?")[0];
-    const splitRootPath = rootPath.split(".");
+    const rootPath = path.split('?')[0];
+    const splitRootPath = rootPath.split('.');
     const itemid = Number(splitRootPath.pop() || 0);
     const shopid = Number(splitRootPath.pop() || 0);
 
-    await updateProduct({ itemid, shopid, status: "pending" });
+    await updateProduct({ itemid, shopid, status: 'pending' });
   }, [formikBag]);
 
   const onViewProduct = useCallback((key: string) => {
@@ -84,7 +78,7 @@ export default function ShopeeHome() {
 
   const productSelected = useMemo(
     () => products.find((product) => product.key === productKeySelected),
-    [products, productKeySelected]
+    [products, productKeySelected],
   );
 
   const onFollowProductModel = useCallback(
@@ -92,17 +86,15 @@ export default function ShopeeHome() {
       if (!productSelected) return;
 
       const { key, models = [] } = productSelected || {};
-      const findModeIndex = models.findIndex(
-        (selected) => selected.name === model
-      );
+      const findModeIndex = models.findIndex((selected) => selected.name === model);
       if (findModeIndex === -1) return;
 
       if (!models[findModeIndex].isFollow) {
         models[findModeIndex].isFollow = true;
-        updateProduct({ key, models, status: "success" });
+        updateProduct({ key, models, status: 'success' });
       }
     },
-    [productSelected]
+    [productSelected],
   );
 
   const onUnFollowProductModel = useCallback(
@@ -110,18 +102,16 @@ export default function ShopeeHome() {
       if (!productSelected) return;
 
       const { key, models = [] } = productSelected || {};
-      const findModeIndex = models.findIndex(
-        (selected) => selected.name === model
-      );
+      const findModeIndex = models.findIndex((selected) => selected.name === model);
 
       if (findModeIndex === -1) return;
 
       if (models[findModeIndex].isFollow) {
         models[findModeIndex].isFollow = false;
-        updateProduct({ key, models, status: "success" });
+        updateProduct({ key, models, status: 'success' });
       }
     },
-    [productSelected]
+    [productSelected],
   );
 
   return (
@@ -129,7 +119,7 @@ export default function ShopeeHome() {
       <div className="flex justify-between gap-2">
         <div className="flex items-center gap-4">
           <Button size="sm" onClick={onTestLogin} outline={clickedLogin}>
-            {clickedLogin ? (isLogged ? "Logged" : "Not Logged") : "Test Login"}
+            {clickedLogin ? (isLogged ? 'Logged' : 'Not Logged') : 'Test Login'}
           </Button>
           <Button size="sm" onClick={onSyncCart}>
             Sync Cart
@@ -156,11 +146,7 @@ export default function ShopeeHome() {
           </div>
         </form>
       </div>
-      <ProductList
-        products={products}
-        onView={onViewProduct}
-        onDelete={onDeleteProduct}
-      />
+      <ProductList products={products} onView={onViewProduct} onDelete={onDeleteProduct} />
       <ProductListDetail
         product={productSelected}
         onClose={() => setProductKeySelected(null)}

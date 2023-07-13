@@ -1,11 +1,11 @@
-import { formatCurrency } from "@/core/commonFuncs";
-import { Badge, Button, Pagination, Table } from "flowbite-react";
-import { getColorFromStatus, getTextFromStatus } from "./common";
-import { ProductType } from "./common/types";
-import { Fragment } from "react";
-import { PaginationType } from "@/core/types";
+import { formatCurrency } from '@/core/commonFuncs';
+import { Badge, Button, Pagination, Table } from 'flowbite-react';
+import { getColorFromStatus, getTextFromStatus } from './common';
+import { ProductType } from './common/types';
+import { Fragment } from 'react';
+import { PaginationType } from '@/core/types';
 
-const statusDisabled = ["pending", "processing"];
+const statusDisabled = ['pending', 'processing'];
 
 type Props = {
   products: ProductType[];
@@ -37,22 +37,15 @@ export default function ProductList(props: Props) {
               className="bg-white dark:border-gray-700 dark:bg-gray-800"
             >
               <Table.Cell className="whitespace-normal font-medium text-gray-900 dark:text-white">
-                {product.name || "--- Unknown ---"}
+                {product.name || '--- Unknown ---'}
               </Table.Cell>
               <Table.Cell>{product.stock || 0}</Table.Cell>
               <Table.Cell>{formatCurrency(product.price || 0)}</Table.Cell>
-              <Table.Cell>
-                {formatCurrency(product.lowestPrice || product.price || 0)}
-              </Table.Cell>
-              <Table.Cell>
-                {formatCurrency(product.highestPrice || product.price || 0)}
-              </Table.Cell>
+              <Table.Cell>{formatCurrency(product.lowestPrice || product.price || 0)}</Table.Cell>
+              <Table.Cell>{formatCurrency(product.highestPrice || product.price || 0)}</Table.Cell>
               <Table.Cell>
                 <div>
-                  <Badge
-                    color={getColorFromStatus(product.status)}
-                    className="inline font-bold"
-                  >
+                  <Badge color={getColorFromStatus(product.status)} className="inline font-bold">
                     {getTextFromStatus(product.status)}
                   </Badge>
                 </div>

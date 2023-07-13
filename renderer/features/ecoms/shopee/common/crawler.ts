@@ -67,8 +67,8 @@ export const getProductCart = async (browser: Browser) => {
       items,
     } = order;
     return items.map((item: ResponseShopeeProduct) => ({
-      shopid,
       ...getProductInfoFromResponse(item),
+      shopid,
     }));
   });
 

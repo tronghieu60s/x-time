@@ -1,8 +1,8 @@
-import { ResponseShopeeProduct } from "./types";
+import { ResponseShopeeProduct } from './types';
 
 export const getProductInfoFromPath = (path: string) => {
-  const [rootPath] = path.split("?");
-  const pathParts = rootPath.split(".");
+  const [rootPath] = path.split('?');
+  const pathParts = rootPath.split('.');
 
   const itemid = Number(pathParts.pop());
   const shopId = Number(pathParts.pop());
@@ -26,9 +26,7 @@ export const getProductInfoFromResponse = (response: ResponseShopeeProduct) => {
     name: variation.name,
     options: variation.options,
   }));
-  const ratingStars = Number(
-    response.item_rating?.rating_star?.toFixed(2) || 0
-  );
+  const ratingStars = Number(response.item_rating?.rating_star?.toFixed(2) || 0);
   const jsonData = JSON.stringify(response, null, 2);
 
   return {

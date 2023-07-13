@@ -1,9 +1,9 @@
-import ProductList from "@/features/products/ProductList";
-import { ProductType } from "@/features/products/common/types";
-import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
+import ProductList from '@/features/products/ProductList';
+import { ProductType } from '@/features/products/common/types';
+import { useRouter } from 'next/router';
+import React, { useCallback, useEffect, useState } from 'react';
 
-const apiPromotionProducts = "/api/ecoms/shopee/promotions/products";
+const apiPromotionProducts = '/api/ecoms/shopee/promotions/products';
 
 export default function ShopeePromotion() {
   const router = useRouter();
@@ -14,18 +14,21 @@ export default function ShopeePromotion() {
     total: 0,
   });
 
+  const { page, limit } = pagination;
+
   useEffect(() => {
-    (async () => {
-      const { page, limit } = pagination;
-      const reqPromotion = await fetch(
-        `${apiPromotionProducts}?page=${page}&limit=${limit}`
-      )
-        .then((res) => res.json())
-        .then((res) => res.data);
-      setProducts(reqPromotion.products);
-      setPagination(reqPromotion.pagination);
-    })();
-  }, [pagination.page, pagination.limit]);
+    const api = `${apiPromotionProducts}?page=${page}&limit=${limit}`;
+    fetch(api)
+      .then((res) => res.json())
+      .then((res) => {
+        const {
+          products,
+          pagination: { total },
+        } = res.data;
+        setProducts(products);
+        setPagination((prev) => ({ ...prev, total }));
+      });
+  }, [page, limit]);
 
   const onPageChange = useCallback((page: number) => {
     setPagination((prev) => ({ ...prev, page }));
@@ -39,7 +42,7 @@ export default function ShopeePromotion() {
       const { itemid, shopid } = findProduct;
       router.push(`https://shopee.vn/A-i.${shopid}.${itemid}`);
     },
-    [products]
+    [products, router],
   );
 
   return (

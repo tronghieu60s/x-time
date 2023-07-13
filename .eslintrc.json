@@ -1,0 +1,12 @@
+{
+  "extends": ["next", "prettier"],
+  "rules": {
+    "semi": ["error", "always"],
+    "quotes": ["error", "single"]
+  },
+  "settings": {
+    "next": {
+      "rootDir": "renderer"
+    }
+  }
+}
