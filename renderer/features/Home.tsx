@@ -2,14 +2,13 @@ import { Modal, Button, Tabs } from 'flowbite-react';
 import ShopeeHome from './ecoms/shopee/ShopeeHome';
 import AuthLogin from './auth/AuthLogin';
 import { useEffect, useState } from 'react';
-import ShopeePromotion from './ecoms/shopee/ShopeePromotion';
 
 export default function HomeFeature() {
   const [isShowLogin, setIsShowLogin] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log('This will run every second!');
+      // console.log('This will run every second!');
     }, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -21,7 +20,7 @@ export default function HomeFeature() {
           <Button size="sm" onClick={() => setIsShowLogin(true)}>
             Login
           </Button>
-          <Modal show={isShowLogin} onClose={() => setIsShowLogin(false)}>
+          <Modal show={isShowLogin} dismissible={true} onClose={() => setIsShowLogin(false)}>
             <Modal.Header>Login</Modal.Header>
             <Modal.Body>
               <AuthLogin onCancel={() => setIsShowLogin(false)} />
@@ -29,11 +28,8 @@ export default function HomeFeature() {
           </Modal>
         </div>
         <Tabs.Group aria-label="Default tabs" style="default">
-          <Tabs.Item active title="Shopee Detect">
+          <Tabs.Item active title="Shopee">
             <ShopeeHome />
-          </Tabs.Item>
-          <Tabs.Item title="Shopee Promotion">
-            <ShopeePromotion />
           </Tabs.Item>
         </Tabs.Group>
       </div>

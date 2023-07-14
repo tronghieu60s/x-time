@@ -3,6 +3,8 @@ import { useFormik } from 'formik';
 import { useCallback, useEffect } from 'react';
 import { initialValuesSetting } from './common/formik';
 import { updateSetting } from './common/database';
+import { onValue } from 'firebase/database';
+import { shopeeSettingRef } from './common/database';
 
 type Props = {
   onClose: () => void;
@@ -12,7 +14,6 @@ export default function ShopeeSetting(props: Props) {
   const { onClose } = props;
 
   const onSubmit = useCallback((values) => {
-    localStorage.setItem('shopee-setting', JSON.stringify(values));
     updateSetting(values);
   }, []);
 
@@ -22,11 +23,11 @@ export default function ShopeeSetting(props: Props) {
   });
 
   useEffect(() => {
-    const shopeeSetting = localStorage.getItem('shopee-setting');
-    if (shopeeSetting) {
-      formikBag.setValues(JSON.parse(shopeeSetting));
-    }
-  }, [formikBag]);
+    onValue(shopeeSettingRef, async (snapshot) => {
+      formikBag.setValues(snapshot.val());
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <form

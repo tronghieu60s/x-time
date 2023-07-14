@@ -1,4 +1,4 @@
-import { ResponseShopeeProduct } from './types';
+import { ResponseShopeeProduct, ResponseShopeePromotion } from './types';
 
 export const getProductInfoFromPath = (path: string) => {
   const [rootPath] = path.split('?');
@@ -15,6 +15,7 @@ export const getProductInfoFromResponse = (response: ResponseShopeeProduct) => {
   const shopid = response?.shopid;
   const name = response.name;
   const price = response.price / 100000;
+  const priceHidden = response.hidden_price_display;
   const stock = response.stock;
   const models = response.models?.map((model: any) => ({
     modelid: model.modelid,
@@ -34,10 +35,23 @@ export const getProductInfoFromResponse = (response: ResponseShopeeProduct) => {
     shopid,
     name,
     price,
+    priceHidden,
     stock,
     models,
     variations,
     ratingStars,
     jsonData,
   };
+};
+
+export const getPromotionInfoFromResponse = (response: ResponseShopeePromotion) => {
+  const endTime = response.current_session_end_time;
+  const sessions = response.sessions.map((session) => ({
+    promotionid: session.promotionid,
+    name: session.name,
+    endTime: session.end_time,
+    startTime: session.start_time,
+    jsonData: JSON.stringify(session, null, 2),
+  }));
+  return { endTime, sessions };
 };

@@ -32,7 +32,8 @@ export default function ProductListDetail(props: Props) {
     if (product?.models) {
       formikBag.setFieldValue('model', []);
     }
-  }, [formikBag, product?.models]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.models]);
 
   const onFollowModel = useCallback(() => {
     const { model } = formikBag.values;

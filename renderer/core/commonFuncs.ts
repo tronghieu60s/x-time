@@ -11,4 +11,18 @@ export const objectToArray = (obj: any) => {
   return arr;
 };
 
+export const countdownTimer = (time: number) => {
+  const currentTime = new Date().getTime();
+  const distance = time - currentTime;
+  let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  return {
+    hours: hours < 10 ? `0${hours}` : hours,
+    minutes: minutes < 10 ? `0${minutes}` : minutes,
+    seconds: seconds < 10 ? `0${seconds}` : seconds,
+  };
+};
+
 export const mapUniqueArray = (arr: any[]) => arr.filter((item, pos) => arr.indexOf(item) === pos);

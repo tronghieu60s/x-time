@@ -10,24 +10,42 @@ const statusDisabled = ['pending', 'processing'];
 type Props = {
   products: ProductType[];
   pagination?: PaginationType;
+  showLowestPrice?: boolean;
+  showHighestPrice?: boolean;
+  showStatus?: boolean;
   onView: (key: string) => void;
   onDelete?: (key: string) => void;
   onPageChange?: (page: number) => void;
 };
 
 export default function ProductList(props: Props) {
-  const { products, pagination, onView, onDelete, onPageChange } = props;
+  const {
+    products,
+    pagination,
+    showLowestPrice = true,
+    showHighestPrice = true,
+    showStatus = true,
+    onView,
+    onDelete,
+    onPageChange,
+  } = props;
 
   return (
-    <Fragment>
+    <div className="flex flex-col gap-4 w-full">
       <Table striped>
         <Table.Head>
           <Table.HeadCell>Name</Table.HeadCell>
           <Table.HeadCell>Stock</Table.HeadCell>
-          <Table.HeadCell>Price</Table.HeadCell>
-          <Table.HeadCell>Lowest Price</Table.HeadCell>
-          <Table.HeadCell>Highest Price</Table.HeadCell>
-          <Table.HeadCell>Status</Table.HeadCell>
+          <Table.HeadCell style={{ width: 150 }}>Price</Table.HeadCell>
+          <Table.HeadCell style={{ width: 150 }} hidden={!showLowestPrice}>
+            Lowest Price
+          </Table.HeadCell>
+          <Table.HeadCell style={{ width: 150 }} hidden={!showHighestPrice}>
+            Highest Price
+          </Table.HeadCell>
+          <Table.HeadCell style={{ width: 150 }} hidden={!showStatus}>
+            Status
+          </Table.HeadCell>
           <Table.HeadCell>Action</Table.HeadCell>
         </Table.Head>
         <Table.Body className="divide-y">
@@ -40,10 +58,14 @@ export default function ProductList(props: Props) {
                 {product.name || '--- Unknown ---'}
               </Table.Cell>
               <Table.Cell>{product.stock || 0}</Table.Cell>
-              <Table.Cell>{formatCurrency(product.price || 0)}</Table.Cell>
-              <Table.Cell>{formatCurrency(product.lowestPrice || product.price || 0)}</Table.Cell>
-              <Table.Cell>{formatCurrency(product.highestPrice || product.price || 0)}</Table.Cell>
-              <Table.Cell>
+              <Table.Cell>{product?.priceHidden || formatCurrency(product.price || 0)}</Table.Cell>
+              <Table.Cell hidden={!showLowestPrice}>
+                {formatCurrency(product.lowestPrice || product.price || 0)}
+              </Table.Cell>
+              <Table.Cell hidden={!showHighestPrice}>
+                {formatCurrency(product.highestPrice || product.price || 0)}
+              </Table.Cell>
+              <Table.Cell hidden={!showStatus}>
                 <div>
                   <Badge color={getColorFromStatus(product.status)} className="inline font-bold">
                     {getTextFromStatus(product.status)}
@@ -85,6 +107,6 @@ export default function ProductList(props: Props) {
           />
         </div>
       )}
-    </Fragment>
+    </div>
   );
 }

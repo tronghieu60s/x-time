@@ -4,7 +4,7 @@ import { getProductCart, getProductDetail, isLogin } from './crawler';
 import _ from 'lodash';
 import { ProductType } from '@/features/products/common/types';
 import { getSettings } from './database';
-import { getProductInfoFromResponse } from '.';
+import { getProductInfoFromResponse, getPromotionInfoFromResponse } from '.';
 import { v4 as uuidv4 } from 'uuid';
 
 const {
@@ -167,19 +167,20 @@ export const scanProductsDetails = async () => {
 };
 
 export const getPromotions = async () => {
-  const promotions = await fetch(`${SHOPEE_PROMOTIONS_URL}?category_personalization_type=1`)
+  const requestPromotions = await fetch(SHOPEE_PROMOTIONS_URL)
     .then((res) => res.json())
     .then((res) => res.data);
+  return getPromotionInfoFromResponse(requestPromotions);
 };
 
-export const getProductsPromotion = async (page: number, limit: number) => {
-  const promotion = await fetch(
-    `${SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL}?promotionid=159639415230465&sort_soldout=true`,
+export const getProductsPromotion = async (page: number, limit: number, promotionid: number) => {
+  const requestPromotion = await fetch(
+    `${SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL}?promotionid=${promotionid}&sort_soldout=true`,
   )
     .then((res) => res.json())
     .then((res) => res.data);
 
-  const productIds = promotion.item_brief_list.map((item) => item.itemid);
+  const productIds = requestPromotion.item_brief_list.map((item) => item.itemid);
 
   const products: any = [];
   const productIdsChunks = _.chunk(productIds, limit).slice(page - 1, page);
@@ -187,17 +188,17 @@ export const getProductsPromotion = async (page: number, limit: number) => {
     const body = {
       limit,
       itemids: productIdsChunk,
-      promotionid: 159639415230465,
+      promotionid,
       with_dp_items: true,
     };
 
-    const items = await fetch(SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL, {
+    const requestItems = await fetch(SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
     }).then((res) => res.json());
 
-    products.push(...items.data.items);
+    products.push(...requestItems.data.items);
   }
 
   const productsInfo = products.map((product) => ({

@@ -8,6 +8,7 @@ export type ResponseShopeeProduct = {
   shopid?: number;
   name: string;
   price: number;
+  hidden_price_display?: string;
   stock: number;
   models?: {
     modelid: number;
@@ -33,4 +34,14 @@ export type ResponseShopeeShopOrder = {
 
 export type ResponseShopeeCart = {
   shop_orders: ResponseShopeeShopOrder[];
+};
+
+export type ResponseShopeePromotion = {
+  sessions: {
+    promotionid: number;
+    name: string;
+    end_time: number;
+    start_time: number;
+  }[]
+  current_session_end_time: number;
 };

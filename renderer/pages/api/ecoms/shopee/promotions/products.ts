@@ -6,15 +6,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const page = Number(req.query.page || 1);
       const limit = Number(req.query.limit || 20);
+      const promotionid = Number(req.query.promotionid || 20);
 
-      const { total, products } = await getProductsPromotion(page, limit);
+      const { total, products } = await getProductsPromotion(page, limit, promotionid);
       const response = {
         success: true,
         data: { products, pagination: { page, limit, total } },
       };
       res.status(200).json(response);
     } catch (error) {
-      res.status(500).json({ success: false, data: {} });
+      res.status(500).json({ success: false, data: null });
     }
   }
 }

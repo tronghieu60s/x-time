@@ -21,6 +21,7 @@ export type ProductType = {
   shopid: number;
   name: string;
   price: number;
+  priceHidden?: string;
   stock: number;
   models?: ProductModelType[];
   variations?: ProductVariationType[];
@@ -47,4 +48,11 @@ export type UpdateProductType = {
   status?: ProductStatusType;
   logs?: string;
   jsonData?: string;
+};
+
+export type PromotionType = {
+  promotionid: number;
+  name: string;
+  startTime: number;
+  endTime: number;
 };
