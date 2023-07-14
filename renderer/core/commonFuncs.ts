@@ -25,4 +25,20 @@ export const countdownTimer = (time: number) => {
   };
 };
 
-export const mapUniqueArray = (arr: any[]) => arr.filter((item, pos) => arr.indexOf(item) === pos);
+export const mapUniqueArray = (arr: any[]) => {
+  return arr.filter((item, pos) => arr.indexOf(item) === pos);
+};
+
+export const filterByConditions = (arr: any[], conditions: any[]) => {
+  let newArr = [...arr];
+  do {
+    const { field, condition, value } = conditions.shift();
+    newArr = newArr.filter((item) => {
+      if (condition === 'includes') if (item[field] && item[field].includes(value)) return true;
+      if (condition === 'excludes') if (item[field] && !item[field].includes(value)) return true;
+      return false;
+    });
+  } while (conditions.length > 0);
+
+  return newArr;
+};

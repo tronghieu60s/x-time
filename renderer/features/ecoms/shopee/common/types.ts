@@ -1,3 +1,12 @@
+export type ShopeeFilterType = {
+  name: string;
+  values: {
+    field: string;
+    condition: string;
+    value: string;
+  }[];
+};
+
 export type ShopeeSettingType = {
   chromePath?: string;
   chromeHeadless?: boolean;

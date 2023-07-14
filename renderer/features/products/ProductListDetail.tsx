@@ -97,7 +97,7 @@ export default function ProductListDetail(props: Props) {
                         <Radio
                           id={`model-${index}-${jIndex}`}
                           name={`model-${index}`}
-                          value={formikBag.values.model[`${index}`]}
+                          checked={formikBag.values.model[`${index}`] === option}
                           onChange={() => {
                             formikBag.setFieldValue(`model[${index}]`, option);
                           }}

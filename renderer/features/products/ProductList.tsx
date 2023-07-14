@@ -34,8 +34,9 @@ export default function ProductList(props: Props) {
     <div className="flex flex-col gap-4 w-full">
       <Table striped>
         <Table.Head>
+          <Table.HeadCell>STT</Table.HeadCell>
           <Table.HeadCell>Name</Table.HeadCell>
-          <Table.HeadCell>Stock</Table.HeadCell>
+          <Table.HeadCell style={{ width: 150 }}>Stock</Table.HeadCell>
           <Table.HeadCell style={{ width: 150 }}>Price</Table.HeadCell>
           <Table.HeadCell style={{ width: 150 }} hidden={!showLowestPrice}>
             Lowest Price
@@ -46,14 +47,15 @@ export default function ProductList(props: Props) {
           <Table.HeadCell style={{ width: 150 }} hidden={!showStatus}>
             Status
           </Table.HeadCell>
-          <Table.HeadCell>Action</Table.HeadCell>
+          <Table.HeadCell style={{ width: 150 }}>Action</Table.HeadCell>
         </Table.Head>
         <Table.Body className="divide-y">
-          {products?.map((product) => (
+          {products?.map((product, index) => (
             <Table.Row
               key={product.itemid}
               className="bg-white dark:border-gray-700 dark:bg-gray-800"
             >
+              <Table.Cell>{index + 1}</Table.Cell>
               <Table.Cell className="whitespace-normal font-medium text-gray-900 dark:text-white">
                 {product.name || '--- Unknown ---'}
               </Table.Cell>
@@ -98,7 +100,12 @@ export default function ProductList(props: Props) {
         </Table.Body>
       </Table>
       {pagination && (
-        <div className="flex justify-end">
+        <div className="flex justify-between items-center">
+          <div>
+            <p>
+              Page: {pagination.page} / {pagination.total}
+            </p>
+          </div>
           <Pagination
             layout="navigation"
             currentPage={pagination.page}

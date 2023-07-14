@@ -15,7 +15,7 @@ export const getProductInfoFromResponse = (response: ResponseShopeeProduct) => {
   const shopid = response?.shopid;
   const name = response.name;
   const price = response.price / 100000;
-  const priceHidden = response.hidden_price_display;
+  const priceHidden = response?.hidden_price_display || '';
   const stock = response.stock;
   const models = response.models?.map((model: any) => ({
     modelid: model.modelid,

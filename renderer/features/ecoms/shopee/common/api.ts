@@ -3,9 +3,10 @@ import puppeteer, { Browser } from 'puppeteer';
 import { getProductCart, getProductDetail, isLogin } from './crawler';
 import _ from 'lodash';
 import { ProductType } from '@/features/products/common/types';
-import { getSettings } from './database';
+import { getFilters, getSettings } from './database';
 import { getProductInfoFromResponse, getPromotionInfoFromResponse } from '.';
 import { v4 as uuidv4 } from 'uuid';
+import { filterByConditions } from '@/core/commonFuncs';
 
 const {
   SHOPEE_URL = 'https://shopee.vn',
@@ -182,33 +183,44 @@ export const getProductsPromotion = async (page: number, limit: number, promotio
 
   const productIds = requestPromotion.item_brief_list.map((item) => item.itemid);
 
-  const products: any = [];
-  const productIdsChunks = _.chunk(productIds, limit).slice(page - 1, page);
-  for (const productIdsChunk of productIdsChunks) {
-    const body = {
-      limit,
-      itemids: productIdsChunk,
-      promotionid,
-      with_dp_items: true,
-    };
-
-    const requestItems = await fetch(SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: { 'Content-Type': 'application/json' },
-    }).then((res) => res.json());
-
-    products.push(...requestItems.data.items);
+  let productIdsChunks = _.chunk(productIds, limit).slice(page - 1, page);
+  if (page === -1) {
+    productIdsChunks = _.chunk(productIds, 50);
   }
 
+  let products = await Promise.all(
+    productIdsChunks.map(async (productIdsChunk) => {
+      const body = {
+        limit,
+        itemids: productIdsChunk,
+        promotionid,
+        with_dp_items: true,
+      };
+
+      const requestItems = await fetch(SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' },
+      }).then((res) => res.json());
+
+      return requestItems.data.items;
+    }),
+  );
+
+  products = _.flatten(products);
+
+  const filters = await getFilters('promotion');
+
+  products = filterByConditions(products, filters[0].values);
+
   const productsInfo = products.map((product) => ({
-    key: uuidv4,
+    key: uuidv4(),
     ...getProductInfoFromResponse(product),
     status: 'success',
   }));
 
   return {
-    total: productIds.length,
+    total: Math.ceil(productIds.length / limit),
     products: productsInfo,
   };
 };

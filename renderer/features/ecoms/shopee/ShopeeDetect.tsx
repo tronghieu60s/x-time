@@ -102,10 +102,10 @@ export default function ShopeeDetect() {
     <div className="flex flex-col gap-4">
       <form className="flex justify-between gap-2">
         <div className="flex items-center gap-4">
-          <Button size="sm" onClick={onSyncCart}>
+          <Button onClick={onSyncCart}>
             Sync Cart
           </Button>
-          <Button size="sm" onClick={onScanProducts}>
+          <Button onClick={onScanProducts}>
             Scan Products
           </Button>
         </div>

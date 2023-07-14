@@ -17,7 +17,7 @@ export default function HomeFeature() {
     <div className="container mx-auto px-2 py-4">
       <div className="flex flex-col gap-4">
         <div>
-          <Button size="sm" onClick={() => setIsShowLogin(true)}>
+          <Button onClick={() => setIsShowLogin(true)}>
             Login
           </Button>
           <Modal show={isShowLogin} dismissible={true} onClose={() => setIsShowLogin(false)}>
@@ -29,6 +29,12 @@ export default function HomeFeature() {
         </div>
         <Tabs.Group aria-label="Default tabs" style="default">
           <Tabs.Item active title="Shopee">
+            <ShopeeHome />
+          </Tabs.Item>
+          <Tabs.Item active title="Lazada">
+            <ShopeeHome />
+          </Tabs.Item>
+          <Tabs.Item active title="Hasaki" disabled>
             <ShopeeHome />
           </Tabs.Item>
         </Tabs.Group>

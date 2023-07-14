@@ -26,13 +26,13 @@ export default function ShopeeHome() {
     <div className="flex flex-col gap-4">
       <form className="flex justify-between gap-2">
         <div className="flex items-center gap-4">
-          <Button size="sm" onClick={onTestLogin} outline={clickedLogin}>
+          <Button onClick={onTestLogin} outline={clickedLogin}>
             {clickedLogin ? (isLogged ? 'Logged' : 'Not Logged') : 'Test Login'}
           </Button>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <Button size="sm" onClick={() => setIsShowSetting(true)}>
+            <Button onClick={() => setIsShowSetting(true)}>
               <Settings size={20} />
             </Button>
           </div>

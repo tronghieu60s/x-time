@@ -1,15 +1,20 @@
-import { countdownTimer } from '@/core/commonFuncs';
+import CountdownTimer from '@/app/components/CountdownTimer';
 import ProductList from '@/features/products/ProductList';
 import { ProductType, PromotionType } from '@/features/products/common/types';
-import { Button, Label, ListGroup, Radio, Select } from 'flowbite-react';
-import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { child, onValue } from 'firebase/database';
+import { Button, Checkbox, Label, Modal } from 'flowbite-react';
+import { useCallback, useEffect, useState } from 'react';
+import ShopeeFilter from './ShopeeFilter';
+import { filterSettingRef, updateFilters } from './common/database';
 
 const apiPromotions = '/api/ecoms/shopee/promotions';
 const apiPromotionProducts = '/api/ecoms/shopee/promotions/products';
 
 export default function ShopeePromotion() {
-  const router = useRouter();
+  const [filters, setFilters] = useState();
+  const [isShowFilter, setIsShowFilter] = useState(false);
+  const [isLoadAll, setIsLoadAll] = useState(false);
+
   const [products, setProducts] = useState<ProductType[]>([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
   const [promotions, setPromotions] = useState<PromotionType[]>([]);
@@ -19,29 +24,17 @@ export default function ShopeePromotion() {
   const { page, limit } = pagination;
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setPromotionEndTime((prev) => prev - 1);
-    }, 2000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    fetch(apiPromotions)
-      .then((res) => res.json())
-      .then((res) => {
-        if (!res.data) return;
-        const { endTime, sessions } = res.data;
-        const promotionSelected = sessions[0].promotionid;
-        setPromotions(sessions);
-        setPromotionEndTime(endTime);
-        setPromotionSelected(promotionSelected);
-      });
+    onValue(child(filterSettingRef, 'promotion'), async (snapshot) => {
+      setFilters(snapshot.val());
+    });
   }, []);
 
   useEffect(() => {
     if (!promotionSelected) return;
+    const currentPage = isLoadAll ? -1 : page;
 
-    fetch(`${apiPromotionProducts}?page=${page}&limit=${limit}&promotionid=${promotionSelected}`)
+    const apiProducts = `${apiPromotionProducts}?page=${currentPage}&limit=${limit}&promotionid=${promotionSelected}`;
+    fetch(apiProducts)
       .then((res) => res.json())
       .then((res) => {
         if (!res.data) return;
@@ -52,7 +45,27 @@ export default function ShopeePromotion() {
         setProducts(products);
         setPagination((prev) => ({ ...prev, total }));
       });
-  }, [page, limit, promotionSelected]);
+  }, [page, limit, promotionSelected, isLoadAll]);
+
+  const getPromotions = useCallback(() => {
+    fetch(apiPromotions)
+      .then((res) => res.json())
+      .then((res) => {
+        if (!res.data) return;
+        const { endTime, sessions } = res.data;
+        setPromotions(sessions);
+        setPromotionEndTime(endTime);
+        setPromotionSelected(sessions[0].promotionid);
+      });
+  }, []);
+
+  useEffect(() => {
+    getPromotions();
+  }, [getPromotions]);
+
+  const onSaveFilter = useCallback((values) => {
+    updateFilters('promotion', values.filters);
+  }, []);
 
   const onPageChange = useCallback((page: number) => {
     setPagination((prev) => ({ ...prev, page }));
@@ -64,9 +77,9 @@ export default function ShopeePromotion() {
       if (!findProduct) return;
 
       const { itemid, shopid } = findProduct;
-      router.push(`https://shopee.vn/A-i.${shopid}.${itemid}`);
+      window.open(`https://shopee.vn/A-i.${shopid}.${itemid}`, '_blank');
     },
-    [products, router],
+    [products],
   );
 
   const onSwitchPromotion = useCallback((id: number) => {
@@ -74,42 +87,65 @@ export default function ShopeePromotion() {
     setPromotionSelected(id);
   }, []);
 
-  const countdown = useMemo(() => {
-    if(!promotionEndTime) return '00:00:00';
-    const timer = countdownTimer(promotionEndTime * 1000);
-    return `${timer.hours}:${timer.minutes}:${timer.seconds}`;
-  }, [promotionEndTime]);
-
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-2">
-        <div className="flex items-center gap-4"></div>
-        <div className="flex items-center gap-4">
-          <Button gradientDuoTone="purpleToBlue">Flash Sale: {countdown}</Button>
+      <div className="flex gap-4">
+        <div className="flex flex-col gap-2">
+          <Button gradientDuoTone="greenToBlue">
+            Sale: <CountdownTimer timer={promotionEndTime} onEnd={getPromotions} />
+          </Button>
+          {promotions.map((promotion) => (
+            <Button
+              key={promotion.promotionid}
+              outline={promotion.promotionid !== promotionSelected}
+              onClick={() => onSwitchPromotion(promotion.promotionid)}
+              className="w-60"
+              gradientDuoTone="purpleToBlue"
+            >
+              <p>{promotion.name.replace('Flash Sale', '').replace('Key Push', '')}</p>
+            </Button>
+          ))}
+        </div>
+        <div className="flex flex-col gap-4 w-full">
+          <form className="flex justify-between gap-2">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="loadAllProducts"
+                  checked={isLoadAll}
+                  onChange={() => setIsLoadAll(!isLoadAll)}
+                />
+                <Label htmlFor="loadAllProducts">Load All Products</Label>
+              </div>
+              <Button gradientDuoTone="purpleToPink" onClick={() => setIsShowFilter(true)}>
+                Filter Products
+              </Button>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2"></div>
+            </div>
+          </form>
+          <ProductList
+            products={products}
+            {...(!isLoadAll && { pagination })}
+            showLowestPrice={false}
+            showHighestPrice={false}
+            showStatus={false}
+            onView={onViewProduct}
+            onPageChange={onPageChange}
+          />
         </div>
       </div>
-      <div className="flex gap-2">
-        {promotions.map((promotion) => (
-          <Button
-            key={promotion.promotionid}
-            outline={promotion.promotionid !== promotionSelected}
-            onClick={() => onSwitchPromotion(promotion.promotionid)}
-            className="basis-1/5"
-            gradientDuoTone="purpleToBlue"
-          >
-            <p>{promotion.name.replace('Flash Sale', '').replace('Key Push', '')}</p>
-          </Button>
-        ))}
-      </div>
-      <ProductList
-        products={products}
-        pagination={pagination}
-        showLowestPrice={false}
-        showHighestPrice={false}
-        showStatus={false}
-        onView={onViewProduct}
-        onPageChange={onPageChange}
-      />
+      <Modal size="7xl" show={isShowFilter} onClose={() => setIsShowFilter(false)}>
+        <Modal.Header>Filter Products</Modal.Header>
+        <Modal.Body>
+          <ShopeeFilter
+            filters={filters}
+            onSave={onSaveFilter}
+            onClose={() => setIsShowFilter(false)}
+          />
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
