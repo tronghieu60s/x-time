@@ -80,16 +80,12 @@ export default function ShopeeFilter(props: Props) {
                     onChange={formikBag.handleChange}
                   />
                 </div>
-                <div>
-                  <Button gradientDuoTone="greenToBlue" onClick={() => onAddFilter(index)}>
-                    Add Filter
-                  </Button>
-                </div>
+                <div></div>
               </div>
               <Table>
                 <Table.Head>
-                  <Table.HeadCell style={{ width: 300 }}>Field</Table.HeadCell>
-                  <Table.HeadCell style={{ width: 300 }}>Condition</Table.HeadCell>
+                  <Table.HeadCell style={{ width: 200 }}>Field</Table.HeadCell>
+                  <Table.HeadCell style={{ width: 200 }}>Condition</Table.HeadCell>
                   <Table.HeadCell>Value</Table.HeadCell>
                   <Table.HeadCell style={{ width: 150 }}>Action</Table.HeadCell>
                 </Table.Head>
@@ -106,6 +102,8 @@ export default function ShopeeFilter(props: Props) {
                           name={`filters[${index}].values[${jIndex}].field`}
                         >
                           <option value="name">Name</option>
+                          <option value="stock">Stock</option>
+                          <option value="price">Price</option>
                         </Select>
                       </Table.Cell>
                       <Table.Cell>
@@ -114,6 +112,12 @@ export default function ShopeeFilter(props: Props) {
                           onChange={formikBag.handleChange}
                           name={`filters[${index}].values[${jIndex}].condition`}
                         >
+                          <option value="equal">Equal</option>
+                          <option value="not-equal">Not Equal</option>
+                          <option value="not-equal">Less Than</option>
+                          <option value="not-equal">Less Than & Equal</option>
+                          <option value="not-equal">Greater Than</option>
+                          <option value="not-equal">Greater Than & Equal</option>
                           <option value="includes">Includes</option>
                           <option value="excludes">Excludes</option>
                         </Select>
@@ -138,8 +142,11 @@ export default function ShopeeFilter(props: Props) {
                   ))}
                 </Table.Body>
               </Table>
-              <div className="flex justify-end">
-                <Button gradientDuoTone="pinkToOrange" onClick={() => onDeleteFilter(index)}>
+              <div className="flex justify-end gap-2">
+                <Button size="sm" onClick={() => onAddFilter(index)}>
+                  Add Filter
+                </Button>
+                <Button size="sm" color="failure" onClick={() => onDeleteFilter(index)}>
                   Delete Filter
                 </Button>
               </div>
@@ -149,9 +156,7 @@ export default function ShopeeFilter(props: Props) {
       </Tabs.Group>
       <div className="w-full flex justify-between pt-4">
         <div className="flex gap-2">
-          <Button gradientDuoTone="purpleToBlue" onClick={onNewFilter}>
-            New Filter
-          </Button>
+          <Button onClick={onNewFilter}>New Filter</Button>
         </div>
         <div className="flex gap-2">
           <Button type="submit">Save</Button>

@@ -10,6 +10,7 @@ const statusDisabled = ['pending', 'processing'];
 type Props = {
   products: ProductType[];
   pagination?: PaginationType;
+  showPriceHidden?: boolean;
   showLowestPrice?: boolean;
   showHighestPrice?: boolean;
   showStatus?: boolean;
@@ -22,6 +23,7 @@ export default function ProductList(props: Props) {
   const {
     products,
     pagination,
+    showPriceHidden = false,
     showLowestPrice = true,
     showHighestPrice = true,
     showStatus = true,
@@ -38,6 +40,9 @@ export default function ProductList(props: Props) {
           <Table.HeadCell>Name</Table.HeadCell>
           <Table.HeadCell style={{ width: 150 }}>Stock</Table.HeadCell>
           <Table.HeadCell style={{ width: 150 }}>Price</Table.HeadCell>
+          <Table.HeadCell style={{ width: 150 }} hidden={!showPriceHidden}>
+            Price Hidden
+          </Table.HeadCell>
           <Table.HeadCell style={{ width: 150 }} hidden={!showLowestPrice}>
             Lowest Price
           </Table.HeadCell>
@@ -60,7 +65,12 @@ export default function ProductList(props: Props) {
                 {product.name || '--- Unknown ---'}
               </Table.Cell>
               <Table.Cell>{product.stock || 0}</Table.Cell>
-              <Table.Cell>{product?.priceHidden || formatCurrency(product.price || 0)}</Table.Cell>
+              <Table.Cell>
+                {product?.priceHidden
+                  ? `~ ${product.priceHidden.replaceAll('?', '9')} ₫`
+                  : formatCurrency(product.price || 0)}
+              </Table.Cell>
+              <Table.Cell hidden={!showPriceHidden}>{product?.priceHidden || '—'} ₫</Table.Cell>
               <Table.Cell hidden={!showLowestPrice}>
                 {formatCurrency(product.lowestPrice || product.price || 0)}
               </Table.Cell>

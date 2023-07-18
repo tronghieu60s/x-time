@@ -39,6 +39,5 @@ export const filterByConditions = (arr: any[], conditions: any[]) => {
       return false;
     });
   } while (conditions.length > 0);
-
   return newArr;
 };

@@ -13,7 +13,6 @@ const apiPromotionProducts = '/api/ecoms/shopee/promotions/products';
 export default function ShopeePromotion() {
   const [filters, setFilters] = useState();
   const [isShowFilter, setIsShowFilter] = useState(false);
-  const [isLoadAll, setIsLoadAll] = useState(false);
 
   const [products, setProducts] = useState<ProductType[]>([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
@@ -31,9 +30,8 @@ export default function ShopeePromotion() {
 
   useEffect(() => {
     if (!promotionSelected) return;
-    const currentPage = isLoadAll ? -1 : page;
 
-    const apiProducts = `${apiPromotionProducts}?page=${currentPage}&limit=${limit}&promotionid=${promotionSelected}`;
+    const apiProducts = `${apiPromotionProducts}?page=${page}&limit=${limit}&promotionid=${promotionSelected}`;
     fetch(apiProducts)
       .then((res) => res.json())
       .then((res) => {
@@ -45,7 +43,7 @@ export default function ShopeePromotion() {
         setProducts(products);
         setPagination((prev) => ({ ...prev, total }));
       });
-  }, [page, limit, promotionSelected, isLoadAll]);
+  }, [page, limit, promotionSelected]);
 
   const getPromotions = useCallback(() => {
     fetch(apiPromotions)
@@ -109,14 +107,6 @@ export default function ShopeePromotion() {
         <div className="flex flex-col gap-4 w-full">
           <form className="flex justify-between gap-2">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="loadAllProducts"
-                  checked={isLoadAll}
-                  onChange={() => setIsLoadAll(!isLoadAll)}
-                />
-                <Label htmlFor="loadAllProducts">Load All Products</Label>
-              </div>
               <Button gradientDuoTone="purpleToPink" onClick={() => setIsShowFilter(true)}>
                 Filter Products
               </Button>
@@ -127,7 +117,8 @@ export default function ShopeePromotion() {
           </form>
           <ProductList
             products={products}
-            {...(!isLoadAll && { pagination })}
+            pagination={pagination}
+            showPriceHidden
             showLowestPrice={false}
             showHighestPrice={false}
             showStatus={false}
@@ -136,7 +127,7 @@ export default function ShopeePromotion() {
           />
         </div>
       </div>
-      <Modal size="7xl" show={isShowFilter} onClose={() => setIsShowFilter(false)}>
+      <Modal size="4xl" show={isShowFilter} onClose={() => setIsShowFilter(false)}>
         <Modal.Header>Filter Products</Modal.Header>
         <Modal.Body>
           <ShopeeFilter
