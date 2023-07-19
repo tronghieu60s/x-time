@@ -1,7 +1,6 @@
 import { database } from '@/core/lib/firebase';
 import { child, get, ref, update } from 'firebase/database';
 import { ShopeeFilterType, ShopeeSettingType } from './types';
-import { FormFilter } from './formik';
 
 export const shopeeSettingRef = ref(database, 'settings/shopee');
 export const filterSettingRef = ref(database, 'settings/shopee/filters');

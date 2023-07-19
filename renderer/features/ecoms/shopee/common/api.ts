@@ -168,61 +168,46 @@ export const scanProductsDetails = async () => {
 };
 
 export const getPromotions = async () => {
-  const requestPromotions = await fetch(SHOPEE_PROMOTIONS_URL)
-    .then((res) => res.json())
-    .then((res) => res.data);
-  return getPromotionInfoFromResponse(requestPromotions);
+  const promotions = await fetch(SHOPEE_PROMOTIONS_URL).then(
+    async (res) => (await res.json()).data,
+  );
+  return getPromotionInfoFromResponse(promotions);
 };
 
-const tempProducts = {};
+export const getProductsPromotion = async (promotionid: number) => {
+  const apiPromotion = `${SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL}?promotionid=${promotionid}&sort_soldout=true`;
+  const promotion = await fetch(apiPromotion).then(async (res) => (await res.json()).data);
 
-export const getProductsPromotion = async (page: number, limit: number, promotionid: number) => {
-  let products: any[] = [];
+  const productIds = promotion.item_brief_list.map((item) => item.itemid);
+  const productIdsChunks = _.chunk(productIds, 50);
 
-  if (tempProducts[promotionid]) {
-    products = tempProducts[promotionid];
-  } else {
-    const promotion = await fetch(
-      `${SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL}?promotionid=${promotionid}&sort_soldout=true`,
-    )
-      .then((res) => res.json())
-      .then((res) => res.data);
+  let products = await Promise.all(
+    productIdsChunks.map(async (productIdsChunk) => {
+      const body = {
+        limit: 50,
+        itemids: productIdsChunk,
+        promotionid,
+        with_dp_items: true,
+      };
 
-    const productIds = promotion.item_brief_list.map((item) => item.itemid);
+      const init = {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' },
+      };
+      const products = await fetch(SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL, init).then(
+        async (res) => (await res.json()).data,
+      );
 
-    const productIdsChunks = _.chunk(productIds, 50);
-
-    products = await Promise.all(
-      productIdsChunks.map(async (productIdsChunk) => {
-        const body = {
-          limit,
-          itemids: productIdsChunk,
-          promotionid,
-          with_dp_items: true,
-        };
-
-        const requestItems = await fetch(SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL, {
-          method: 'POST',
-          body: JSON.stringify(body),
-          headers: { 'Content-Type': 'application/json' },
-        }).then((res) => res.json());
-
-        return requestItems.data.items;
-      }),
-    );
-    products = _.flatten(products);
-    tempProducts[promotionid] = products;
-  }
-
-  const filters = await getFilters('promotion');
-
-  const filteredProducts = filterByConditions(products, filters[0].values);
-
-  const productsInfo = filteredProducts.map((product) => ({
+      return products.items;
+    }),
+  );
+  products = _.flatten(products);
+  products = products.map((product) => ({
     key: uuidv4(),
     ...getProductInfoFromResponse(product),
     status: 'success',
   }));
 
-  return { total: products.length, products: productsInfo };
+  return products;
 };

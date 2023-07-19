@@ -29,15 +29,32 @@ export const mapUniqueArray = (arr: any[]) => {
   return arr.filter((item, pos) => arr.indexOf(item) === pos);
 };
 
-export const filterByConditions = (arr: any[], conditions: any[]) => {
+export const filterByConditions = (arr: any[], conditions?: any[]) => {
+  if (!conditions || conditions.length === 0) return arr;
+
   let newArr = [...arr];
   do {
     const { field, condition, value } = conditions.shift();
     newArr = newArr.filter((item) => {
-      if (condition === 'includes') if (item[field] && item[field].includes(value)) return true;
-      if (condition === 'excludes') if (item[field] && !item[field].includes(value)) return true;
+      let fieldValue = item[field];
+      let compareValue = value;
+      if (condition === 'equal') if (fieldValue && fieldValue === compareValue) return true;
+      if (condition === 'not-equal') if (fieldValue && fieldValue !== compareValue) return true;
+      if (condition === 'less-than') if (fieldValue && fieldValue < compareValue) return true;
+      if (condition === 'less-than-or-equal')
+        if (fieldValue && fieldValue <= compareValue) return true;
+      if (condition === 'greater-than') if (fieldValue && fieldValue > compareValue) return true;
+      if (condition === 'greater-than-or-equal')
+        if (fieldValue && fieldValue >= compareValue) return true;
+      if (condition === 'includes')
+        if (fieldValue && fieldValue.toLowerCase().includes(compareValue.toLowerCase()))
+          return true;
+      if (condition === 'excludes')
+        if (fieldValue && !fieldValue.toLowerCase().includes(compareValue.toLowerCase()))
+          return true;
       return false;
     });
   } while (conditions.length > 0);
+
   return newArr;
 };

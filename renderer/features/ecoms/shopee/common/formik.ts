@@ -15,7 +15,7 @@ export const initialValuesFilter: FormFilter = {
       values: [
         {
           field: 'name',
-          condition: 'extends',
+          condition: 'equal',
           value: 'Filter 1',
         },
       ],

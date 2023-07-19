@@ -2,16 +2,18 @@ import CountdownTimer from '@/app/components/CountdownTimer';
 import ProductList from '@/features/products/ProductList';
 import { ProductType, PromotionType } from '@/features/products/common/types';
 import { child, onValue } from 'firebase/database';
-import { Button, Checkbox, Label, Modal } from 'flowbite-react';
+import { Button, Modal, Select } from 'flowbite-react';
 import { useCallback, useEffect, useState } from 'react';
 import ShopeeFilter from './ShopeeFilter';
 import { filterSettingRef, updateFilters } from './common/database';
+import { ShopeeFilterType } from './common/types';
 
 const apiPromotions = '/api/ecoms/shopee/promotions';
 const apiPromotionProducts = '/api/ecoms/shopee/promotions/products';
 
 export default function ShopeePromotion() {
-  const [filters, setFilters] = useState();
+  const [filters, setFilters] = useState<ShopeeFilterType[]>([]);
+  const [filterSelected, setFilterSelected] = useState(-1);
   const [isShowFilter, setIsShowFilter] = useState(false);
 
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -28,10 +30,11 @@ export default function ShopeePromotion() {
     });
   }, []);
 
-  useEffect(() => {
+  const getProducts = useCallback(() => {
     if (!promotionSelected) return;
 
-    const apiProducts = `${apiPromotionProducts}?page=${page}&limit=${limit}&promotionid=${promotionSelected}`;
+    const filterParams = JSON.stringify(filters[filterSelected]?.values || []);
+    const apiProducts = `${apiPromotionProducts}?page=${page}&limit=${limit}&promotionid=${promotionSelected}&filter=${filterParams}`;
     fetch(apiProducts)
       .then((res) => res.json())
       .then((res) => {
@@ -43,7 +46,7 @@ export default function ShopeePromotion() {
         setProducts(products);
         setPagination((prev) => ({ ...prev, total }));
       });
-  }, [page, limit, promotionSelected]);
+  }, [filterSelected, filters, limit, page, promotionSelected]);
 
   const getPromotions = useCallback(() => {
     fetch(apiPromotions)
@@ -61,12 +64,25 @@ export default function ShopeePromotion() {
     getPromotions();
   }, [getPromotions]);
 
-  const onSaveFilter = useCallback((values) => {
-    updateFilters('promotion', values.filters);
-  }, []);
+  useEffect(() => {
+    if (!promotionSelected) return;
+    getProducts();
+  }, [getProducts, promotionSelected]);
+
+  const onSaveFilter = useCallback(
+    (values) => {
+      updateFilters('promotion', values.filters);
+      getProducts();
+    },
+    [getProducts],
+  );
 
   const onPageChange = useCallback((page: number) => {
     setPagination((prev) => ({ ...prev, page }));
+  }, []);
+
+  const onFilterChange = useCallback((index: number) => {
+    setFilterSelected(index);
   }, []);
 
   const onViewProduct = useCallback(
@@ -110,6 +126,14 @@ export default function ShopeePromotion() {
               <Button gradientDuoTone="purpleToPink" onClick={() => setIsShowFilter(true)}>
                 Filter Products
               </Button>
+              <Select onChange={(e) => onFilterChange(Number(e.target.value))}>
+                <option value={-1}>All</option>
+                {filters.map((filter, index) => (
+                  <option key={index} value={index}>
+                    {filter.name}
+                  </option>
+                ))}
+              </Select>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2"></div>

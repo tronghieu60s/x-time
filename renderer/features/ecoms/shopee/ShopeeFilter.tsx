@@ -2,11 +2,67 @@ import { Button, Label, Select, Table, Tabs, TextInput } from 'flowbite-react';
 import { useFormik } from 'formik';
 import { useCallback, useEffect } from 'react';
 import { FormFilter, initialValuesFilter } from './common/formik';
+import { objectToArray } from '@/core/commonFuncs';
+import { ShopeeFilterType } from './common/types';
 
 type Props = {
-  filters?: FormFilter;
+  filters?: ShopeeFilterType[];
   onSave: (values: FormFilter) => void;
   onClose: () => void;
+};
+
+const filteredFields = {
+  name: {
+    type: 'text',
+    label: 'Name',
+  },
+  stock: {
+    type: 'number',
+    label: 'Stock',
+  },
+  price: {
+    type: 'number',
+    label: 'Price',
+  },
+  priceHidden: {
+    type: 'text',
+    label: 'Price Hidden',
+  },
+};
+
+const filteredCondition = {
+  equal: {
+    label: 'Equal',
+    fields: ['text', 'number'],
+  },
+  'not-equal': {
+    label: 'Not Equal',
+    fields: ['text', 'number'],
+  },
+  'less-than': {
+    label: 'Less Than',
+    fields: ['number'],
+  },
+  'less-than-or-equal': {
+    label: 'Less Than Or Equal',
+    fields: ['number'],
+  },
+  'greater-than': {
+    label: 'Greater Than',
+    fields: ['number'],
+  },
+  'greater-than-or-equal': {
+    label: 'Greater Than Or Equal',
+    fields: ['number'],
+  },
+  includes: {
+    label: 'Includes',
+    fields: ['text'],
+  },
+  excludes: {
+    label: 'Excludes',
+    fields: ['text'],
+  },
 };
 
 export default function ShopeeFilter(props: Props) {
@@ -42,7 +98,7 @@ export default function ShopeeFilter(props: Props) {
 
   const onAddFilter = useCallback(
     (index: number) => {
-      const filter = values.filters[index].values;
+      const filter = values.filters[index].values || [];
       filter.push({ field: 'name', condition: 'extends', value: '' });
       values.filters[index].values = filter;
       setFieldValue('filters', values.filters);
@@ -90,56 +146,71 @@ export default function ShopeeFilter(props: Props) {
                   <Table.HeadCell style={{ width: 150 }}>Action</Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
-                  {filter.values.map((value, jIndex) => (
-                    <Table.Row
-                      key={jIndex}
-                      className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                    >
-                      <Table.Cell>
-                        <Select
-                          value={value.field}
-                          onChange={formikBag.handleChange}
-                          name={`filters[${index}].values[${jIndex}].field`}
-                        >
-                          <option value="name">Name</option>
-                          <option value="stock">Stock</option>
-                          <option value="price">Price</option>
-                        </Select>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Select
-                          value={value.condition}
-                          onChange={formikBag.handleChange}
-                          name={`filters[${index}].values[${jIndex}].condition`}
-                        >
-                          <option value="equal">Equal</option>
-                          <option value="not-equal">Not Equal</option>
-                          <option value="not-equal">Less Than</option>
-                          <option value="not-equal">Less Than & Equal</option>
-                          <option value="not-equal">Greater Than</option>
-                          <option value="not-equal">Greater Than & Equal</option>
-                          <option value="includes">Includes</option>
-                          <option value="excludes">Excludes</option>
-                        </Select>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <TextInput
-                          value={value.value}
-                          onChange={formikBag.handleChange}
-                          name={`filters[${index}].values[${jIndex}].value`}
-                        />
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Button
-                          size="xs"
-                          gradientDuoTone="pinkToOrange"
-                          onClick={() => onDeleteFilterRow(index, jIndex)}
-                        >
-                          Delete
-                        </Button>
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
+                  {filter.values?.map((value, jIndex) => {
+                    const name = `filters[${index}].values[${jIndex}]`;
+                    const type = filteredFields[value.field].type;
+                    return (
+                      <Table.Row
+                        key={jIndex}
+                        className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                      >
+                        <Table.Cell>
+                          <Select
+                            value={value.field}
+                            onChange={formikBag.handleChange}
+                            name={`${name}.field`}
+                          >
+                            {objectToArray(filteredFields).map((item, index) => (
+                              <option key={index} value={item.key}>
+                                {item.label}
+                              </option>
+                            ))}
+                          </Select>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Select
+                            value={value.condition}
+                            onChange={formikBag.handleChange}
+                            name={`${name}.condition`}
+                          >
+                            {objectToArray(filteredCondition)
+                              .filter((item) => item.fields.indexOf(type) > -1)
+                              .map((item, index) => (
+                                <option key={index} value={item.key}>
+                                  {item.label}
+                                </option>
+                              ))}
+                          </Select>
+                        </Table.Cell>
+                        <Table.Cell>
+                          {type === 'text' && (
+                            <TextInput
+                              value={value.value}
+                              onChange={formikBag.handleChange}
+                              name={`${name}.value`}
+                            />
+                          )}
+                          {type === 'number' && (
+                            <TextInput
+                              type="number"
+                              value={value.value}
+                              onChange={formikBag.handleChange}
+                              name={`${name}.value`}
+                            />
+                          )}
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Button
+                            size="xs"
+                            gradientDuoTone="pinkToOrange"
+                            onClick={() => onDeleteFilterRow(index, jIndex)}
+                          >
+                            Delete
+                          </Button>
+                        </Table.Cell>
+                      </Table.Row>
+                    );
+                  })}
                 </Table.Body>
               </Table>
               <div className="flex justify-end gap-2">

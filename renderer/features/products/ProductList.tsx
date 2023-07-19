@@ -2,7 +2,6 @@ import { formatCurrency } from '@/core/commonFuncs';
 import { Badge, Button, Pagination, Table } from 'flowbite-react';
 import { getColorFromStatus, getTextFromStatus } from './common';
 import { ProductType } from './common/types';
-import { Fragment } from 'react';
 import { PaginationType } from '@/core/types';
 
 const statusDisabled = ['pending', 'processing'];
@@ -36,7 +35,7 @@ export default function ProductList(props: Props) {
     <div className="flex flex-col gap-4 w-full">
       <Table striped>
         <Table.Head>
-          <Table.HeadCell>STT</Table.HeadCell>
+          <Table.HeadCell style={{ width: 50 }}>STT</Table.HeadCell>
           <Table.HeadCell>Name</Table.HeadCell>
           <Table.HeadCell style={{ width: 150 }}>Stock</Table.HeadCell>
           <Table.HeadCell style={{ width: 150 }}>Price</Table.HeadCell>
@@ -60,7 +59,9 @@ export default function ProductList(props: Props) {
               key={product.itemid}
               className="bg-white dark:border-gray-700 dark:bg-gray-800"
             >
-              <Table.Cell>{index + 1}</Table.Cell>
+              <Table.Cell>
+                {pagination ? index + 1 + (pagination.page - 1) * pagination.limit : index + 1}
+              </Table.Cell>
               <Table.Cell className="whitespace-normal font-medium text-gray-900 dark:text-white">
                 {product.name || '--- Unknown ---'}
               </Table.Cell>
@@ -118,9 +119,9 @@ export default function ProductList(props: Props) {
           </div>
           <Pagination
             layout="navigation"
+            totalPages={pagination.total}
             currentPage={pagination.page}
             onPageChange={(page) => onPageChange && onPageChange(page)}
-            totalPages={pagination.total}
           />
         </div>
       )}

@@ -1,5 +1,6 @@
 export type ShopeeFilterType = {
   name: string;
+  isCompareLowerCase?: boolean;
   values: {
     field: string;
     condition: string;
