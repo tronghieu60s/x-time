@@ -1,4 +1,3 @@
-import { filterByConditions } from '@/core/commonFuncs';
 import { getProducts, updateProduct } from '@/features/products/common/database';
 import { ProductType } from '@/features/products/common/types';
 import _ from 'lodash';
@@ -6,7 +5,7 @@ import puppeteer, { Browser } from 'puppeteer';
 import { v4 as uuidv4 } from 'uuid';
 import { getProductInfoFromResponse, getPromotionInfoFromResponse } from '.';
 import { getProductCart, getProductDetail, isLogin } from './crawler';
-import { getFilters, getSettings } from './database';
+import { getSettings } from './database';
 
 const {
   SHOPEE_URL = 'https://shopee.vn',

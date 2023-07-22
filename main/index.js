@@ -32,5 +32,9 @@ electron_1.app.on('ready', async () => {
         autoHideMenuBar: !electron_is_dev_1.default,
     });
     mainWindow.loadURL(`http://localhost:${port}/`);
+    mainWindow.webContents.setWindowOpenHandler((details) => {
+        electron_1.shell.openExternal(details.url);
+        return { action: 'deny' };
+    });
 });
 electron_1.app.on('window-all-closed', electron_1.app.quit);

@@ -11,7 +11,7 @@ const {
 export const isLogin = async (page: Page) => {
   const isLogin = await page.evaluate(async (apiUrl) => {
     const requestOrders = await fetch(apiUrl).then((res) => res.json());
-    if (requestOrders.eror === 19) {
+    if (requestOrders.error === 19) {
       return false;
     }
     return true;

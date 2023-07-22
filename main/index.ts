@@ -1,5 +1,5 @@
 // Packages
-import { BrowserWindow, app } from 'electron';
+import { BrowserWindow, app, shell } from 'electron';
 import isDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import { createServer } from 'http';
@@ -33,6 +33,11 @@ app.on('ready', async () => {
   });
 
   mainWindow.loadURL(`http://localhost:${port}/`);
+
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url);
+    return { action: 'deny' };
+  });
 });
 
 app.on('window-all-closed', app.quit);
