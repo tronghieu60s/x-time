@@ -108,13 +108,20 @@ export default function ProductList(props: Props) {
               </Table.Cell>
             </Table.Row>
           ))}
+          {!products.length && (
+            <Table.Row>
+              <Table.Cell colSpan={10}>
+                <div className="flex justify-center">No Data</div>
+              </Table.Cell>
+            </Table.Row>
+          )}
         </Table.Body>
       </Table>
       {pagination && (
         <div className="flex justify-between items-center">
           <div>
-            <p>
-              Page: {pagination.page} / {pagination.total}
+            <p className="text-base">
+              Page: {pagination.page} / {pagination.total || 1}
             </p>
           </div>
           <Pagination
