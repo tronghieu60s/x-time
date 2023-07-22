@@ -5,7 +5,7 @@ export default function IndexPage() {
   return (
     <div>
       <Head>
-        <title>MemReFinder</title>
+        <title>Shopee Test</title>
       </Head>
       <HomeFeature />
     </div>

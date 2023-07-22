@@ -29,6 +29,7 @@ app.on('ready', async () => {
       nodeIntegration: false,
       contextIsolation: false,
     },
+    autoHideMenuBar: !isDev,
   });
 
   mainWindow.loadURL(`http://localhost:${port}/`);

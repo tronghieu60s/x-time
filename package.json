@@ -1,12 +1,12 @@
 {
   "private": true,
-  "name": "memrefinder",
-  "description": "GPT-powered File Explorer App to Chat with your documents and files to find answers to your questions",
-  "version": "0.0.2",
+  "name": "app-shopee",
+  "description": "app-shopee",
+  "version": "1.0.0",
   "author": "Praveen Palanisamy <praveen.palanisamy@outlook.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/praveen-palanisamy/MemReFinder"
+    "url": "https://github.com/tronghieu60s/app-shopee"
   },
   "main": "main/index.js",
   "scripts": {
@@ -59,8 +59,8 @@
     "typescript": "^4.9.4"
   },
   "build": {
-    "appId": "com.praveenp.memrefinder",
-    "productName": "MemReFinder",
+    "appId": "com.shopeee.test",
+    "productName": "Shopee Test",
     "files": [
       "main/*.js",
       "renderer"

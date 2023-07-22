@@ -1,6 +1,6 @@
-appId: com.praveenp.memrefinder
-productName: MemReFinder: Chat with your Data
-copyright: Copyright © 2023 Praveen Palanisamy
+appId: com.shopeee.test
+productName: Shopee Test
+copyright: Copyright © 2023 Shopee Test
 directories:
   output: dist
   buildResources: resources

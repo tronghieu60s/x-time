@@ -11,9 +11,9 @@ const http_1 = require("http");
 const next_1 = __importDefault(require("next"));
 const url_1 = require("url");
 (0, electron_unhandled_1.default)();
-const nextApp = (0, next_1.default)({ dev: electron_is_dev_1.default, dir: electron_1.app.getAppPath() + "/renderer" });
+const nextApp = (0, next_1.default)({ dev: electron_is_dev_1.default, dir: electron_1.app.getAppPath() + '/renderer' });
 const handle = nextApp.getRequestHandler();
-electron_1.app.on("ready", async () => {
+electron_1.app.on('ready', async () => {
     await nextApp.prepare();
     const port = process.argv[2] || 3000;
     (0, http_1.createServer)((req, res) => {
@@ -29,7 +29,8 @@ electron_1.app.on("ready", async () => {
             nodeIntegration: false,
             contextIsolation: false,
         },
+        autoHideMenuBar: !electron_is_dev_1.default,
     });
     mainWindow.loadURL(`http://localhost:${port}/`);
 });
-electron_1.app.on("window-all-closed", electron_1.app.quit);
+electron_1.app.on('window-all-closed', electron_1.app.quit);
