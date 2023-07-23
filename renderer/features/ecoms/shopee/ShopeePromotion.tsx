@@ -18,6 +18,7 @@ export default function ShopeePromotion() {
 
   const [promotions, setPromotions] = useState<PromotionType[]>([]);
   const [promotionEndTime, setPromotionEndTime] = useState(0);
+  const [numOfProducts, setNumOfProducts] = useState<number[]>([]);
 
   useEffect(() => {
     onValue(child(filterSettingRef, 'promotion'), async (snapshot) => {
@@ -55,6 +56,14 @@ export default function ShopeePromotion() {
     setFilterSelected(index);
   }, []);
 
+  const onSetNumOfProducts = useCallback((index: number, number: number) => {
+    setNumOfProducts((prev) => {
+      const newNumOfProducts = [...prev];
+      newNumOfProducts[index] = number;
+      return newNumOfProducts;
+    });
+  }, []);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">
@@ -80,12 +89,13 @@ export default function ShopeePromotion() {
       </div>
       <Tabs.Group aria-label="Full width tabs" style="fullWidth">
         {promotions.map((promotion, index) => (
-          <Tabs.Item key={index} title={promotion.name}>
+          <Tabs.Item key={index} title={`${promotion.name} (${numOfProducts[index] || 0})`}>
             <ShopeePromotionDetail
               filters={filters}
               filterGlobalSelected={filterSelected}
               promotion={promotion}
               currentPromotion={index === 0}
+              onSetNumOfProducts={(number) => onSetNumOfProducts(index, number)}
             />
           </Tabs.Item>
         ))}

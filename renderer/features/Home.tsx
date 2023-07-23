@@ -11,7 +11,7 @@ export default function HomeFeature() {
   }, []);
 
   return (
-    <div className="container mx-auto px-2 py-4">
+    <div className="container mx-auto">
       <div className="flex flex-col gap-4">
         <Tabs.Group aria-label="Default tabs" style="fullWidth">
           <Tabs.Item active title="Shopee">

@@ -10,12 +10,13 @@ type Props = {
   filterGlobalSelected: number;
   promotion: PromotionType;
   currentPromotion: boolean;
+  onSetNumOfProducts: (numOfProducts: number) => void;
 };
 
 const apiPromotionProducts = '/api/ecoms/shopee/promotions/products';
 
 export default function ShopeePromotionDetail(props: Props) {
-  const { filters, filterGlobalSelected, promotion, currentPromotion } = props;
+  const { filters, filterGlobalSelected, promotion, currentPromotion, onSetNumOfProducts } = props;
 
   const [products, setProducts] = useState<ProductType[]>([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
@@ -30,13 +31,16 @@ export default function ShopeePromotionDetail(props: Props) {
     setFilterSelected(filterGlobalSelected);
   }, [filterGlobalSelected]);
 
+  useEffect(() => {
+    onSetNumOfProducts(pagination.total);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [, pagination.total]);
+
   const getProducts = useCallback(() => {
-    const filterChildren =
-      filters[filterSelected]?.children?.map((child) => filters[child]?.values) || [];
-    const filterProducts = JSON.stringify([
-      ...(filters[filterSelected]?.values || []),
-      ...filterChildren.flat(),
-    ]);
+    const { values = [], children = [] } = filters[filterSelected] || {};
+    const filterChildren = children?.map((child) => filters[child]?.values) || [];
+    const filterProducts = JSON.stringify([...values, ...filterChildren.flat()]);
+
     const apiProducts = `${apiPromotionProducts}?page=${page}&limit=${limit}&promotionid=${promotion.promotionid}&filter=${filterProducts}`;
     fetch(apiProducts)
       .then((res) => res.json())
@@ -49,7 +53,7 @@ export default function ShopeePromotionDetail(props: Props) {
         setProducts(products);
         setPagination((prev) => ({ ...prev, total }));
       });
-  }, [filterSelected, filters, limit, page, promotion]);
+  }, [filterSelected, filters, limit, page, promotion.promotionid]);
 
   useEffect(() => {
     getProducts();
