@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const electron_is_dev_1 = __importDefault(require("electron-is-dev"));
 const electron_unhandled_1 = __importDefault(require("electron-unhandled"));
+const electron_updater_1 = require("electron-updater");
 const http_1 = require("http");
 const next_1 = __importDefault(require("next"));
 const url_1 = require("url");
@@ -32,6 +33,7 @@ electron_1.app.on('ready', async () => {
         autoHideMenuBar: !electron_is_dev_1.default,
     });
     mainWindow.loadURL(`http://localhost:${port}/`);
+    electron_updater_1.autoUpdater.checkForUpdatesAndNotify();
     mainWindow.webContents.setWindowOpenHandler((details) => {
         electron_1.shell.openExternal(details.url);
         return { action: 'deny' };

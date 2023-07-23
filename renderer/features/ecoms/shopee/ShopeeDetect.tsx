@@ -1,13 +1,12 @@
-import { objectToArray } from '@/core/commonFuncs';
 import ProductList from '@/features/products/ProductList';
 import ProductListDetail from '@/features/products/ProductListDetail';
 import { deleteProduct, productsRef, updateProduct } from '@/features/products/common/database';
 import { ProductType } from '@/features/products/common/types';
-import { limitToFirst, onValue, query } from 'firebase/database';
 import { Button, TextInput } from 'flowbite-react';
 import { useFormik } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { initialValues } from './common/formik';
+import { onValue } from 'firebase/database';
 
 const apiSyncCart = '/api/ecoms/shopee/cart/sync';
 const apiProducts = '/api/ecoms/shopee/products';
@@ -19,14 +18,16 @@ export default function ShopeeDetect() {
   const [productKeySelected, setProductKeySelected] = useState<string | null>(null);
 
   useEffect(() => {
-    const api = `${apiProducts}?page=${pagination.page}&limit=${pagination.limit}`;
-    fetch(api)
-      .then((res) => res.json())
-      .then((res) => {
-        const { products, pagination } = res.data;
-        setProducts(products);
-        setPagination(pagination);
-      });
+    onValue(productsRef, () => {
+      const api = `${apiProducts}?page=${pagination.page}&limit=${pagination.limit}`;
+      fetch(api)
+        .then((res) => res.json())
+        .then((res) => {
+          const { products, pagination } = res.data;
+          setProducts(products);
+          setPagination(pagination);
+        });
+    });
   }, [pagination.limit, pagination.page]);
 
   const formikBag = useFormik({

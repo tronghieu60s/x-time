@@ -80,7 +80,8 @@
         "nsis",
         "zip",
         "portable"
-      ]
+      ],
+      "publish": ["github"]
     },
     "linux": {
       "target": [

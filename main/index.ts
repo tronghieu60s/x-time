@@ -2,6 +2,7 @@
 import { BrowserWindow, app, shell } from 'electron';
 import isDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
+import { autoUpdater } from 'electron-updater';
 import { createServer } from 'http';
 import next from 'next';
 import { parse } from 'url';
@@ -34,6 +35,8 @@ app.on('ready', async () => {
 
   mainWindow.loadURL(`http://localhost:${port}/`);
 
+  autoUpdater.checkForUpdatesAndNotify();
+
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url);
     return { action: 'deny' };
@@ -41,3 +44,4 @@ app.on('ready', async () => {
 });
 
 app.on('window-all-closed', app.quit);
+

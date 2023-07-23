@@ -26,7 +26,9 @@ export default function AuthLogin(props: Props) {
         }
 
         createUserWithEmailAndPassword(auth, email, password)
-          .then(() => {})
+          .then(() => {
+            alert('Register success!');
+          })
           .catch((error) => {
             alert(error.message);
           });
@@ -35,7 +37,9 @@ export default function AuthLogin(props: Props) {
       }
 
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => {})
+        .then(() => {
+          alert('Login success!');
+        })
         .catch((error) => {
           alert(error.message);
         });

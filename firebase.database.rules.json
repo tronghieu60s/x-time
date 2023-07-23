@@ -1,9 +1,9 @@
 {
-    "rules": {
-      ".read": true,
-      ".write": true,
-      "products": {
-        ".indexOn": "itemid"
-      }
+  "rules": {
+    ".read": true,
+    ".write": true,
+    "products": {
+      ".indexOn": "itemid"
     }
   }
+}

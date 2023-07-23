@@ -42,3 +42,4 @@ export const updateFilters = async (key: string, filters: ShopeeFilterType[]) =>
     resolve(true);
   });
 };
+

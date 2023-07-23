@@ -1,18 +1,22 @@
+import { User } from 'firebase/auth';
 import { Button, Modal, Tabs } from 'flowbite-react';
-import ShopeeDetect from './ShopeeDetect';
-import { Settings } from 'react-feather';
 import { useCallback, useState } from 'react';
-import ShopeeSetting from './ShopeeSetting';
+import { Settings } from 'react-feather';
+import ShopeeDetect from './ShopeeDetect';
 import ShopeePromotion from './ShopeePromotion';
-import AuthLogin from '@/features/auth/AuthLogin';
+import ShopeeSetting from './ShopeeSetting';
+
+type Props = {
+  user: User | null;
+};
 
 const apiTestLogin = '/api/ecoms/shopee/auth/test-login';
 
-export default function ShopeeHome() {
+export default function ShopeeHome(props: Props) {
+  const { user } = props;
   const [isLogged, setIsLogged] = useState(false);
   const [clickedLogin, setClickedLogin] = useState(false);
 
-  const [isShowLogin, setIsShowLogin] = useState(false);
   const [isShowSetting, setIsShowSetting] = useState(false);
 
   const onTestLogin = useCallback(() => {
@@ -25,21 +29,16 @@ export default function ShopeeHome() {
       });
   }, []);
 
+  if (!user) {
+    return <div>Please login to use this feature.</div>;
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">
         <div className="flex items-center gap-4">
-          <div>
-            <Button onClick={() => setIsShowLogin(true)}>Login</Button>
-            <Modal show={isShowLogin} dismissible={true} onClose={() => setIsShowLogin(false)}>
-              <Modal.Header>Login</Modal.Header>
-              <Modal.Body>
-                <AuthLogin onCancel={() => setIsShowLogin(false)} />
-              </Modal.Body>
-            </Modal>
-          </div>
           <Button onClick={onTestLogin} outline={clickedLogin}>
-            Shopee ({clickedLogin ? (isLogged ? 'Logged' : 'Not Logged') : 'Test Login'})
+            {clickedLogin ? (isLogged ? 'Logged' : 'Not Logged') : 'Test Login'}
           </Button>
         </div>
         <div className="flex items-center gap-4">

@@ -24,7 +24,7 @@ export default function ShopeeSetting(props: Props) {
 
   useEffect(() => {
     onValue(shopeeSettingRef, async (snapshot) => {
-      formikBag.setValues(snapshot.val());
+      formikBag.setValues(snapshot.val() || initialValuesSetting);
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -52,7 +52,7 @@ export default function ShopeeSetting(props: Props) {
           id="chromeHeadless"
           name="chromeHeadless"
           checked={formikBag.values.chromeHeadless}
-          onChange={formikBag.handleChange}
+          onChange={() => formikBag.setFieldValue('chromeHeadless', !formikBag.values.chromeHeadless)}
         />
         <Label htmlFor="chromeHeadless">Chrome Headless</Label>
       </div>

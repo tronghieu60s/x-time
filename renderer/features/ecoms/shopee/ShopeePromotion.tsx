@@ -22,8 +22,8 @@ export default function ShopeePromotion() {
 
   useEffect(() => {
     onValue(child(filterSettingRef, 'promotion'), async (snapshot) => {
-      const filters = snapshot.val();
-      const isHasFilterAll = filters.some((filter: any) => filter.id === 0);
+      const filters = snapshot.val() || [];
+      const isHasFilterAll = filters?.some((filter: any) => filter.id === 0);
       if (!isHasFilterAll) {
         setFilters([filterAll, ...filters]);
         return;

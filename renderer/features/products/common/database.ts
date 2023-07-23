@@ -1,5 +1,4 @@
 import { objectToArray } from '@/core/commonFuncs';
-import { database } from '@/core/lib/firebase';
 import {
   child,
   equalTo,
@@ -12,6 +11,7 @@ import {
   update,
 } from 'firebase/database';
 import { ProductType, UpdateProductType } from './types';
+import { database } from '@/core/lib/firebase';
 
 export const productsRef = ref(database, 'products');
 
