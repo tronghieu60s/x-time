@@ -121,7 +121,7 @@ export default function ProductList(props: Props) {
         <div className="flex justify-between items-center">
           <div>
             <p className="text-base">
-              Page: {pagination.page} / {pagination.total || 1}
+              Page: {pagination.page} / {Math.ceil(pagination.total / pagination.limit)  || 1}
             </p>
           </div>
           <Pagination

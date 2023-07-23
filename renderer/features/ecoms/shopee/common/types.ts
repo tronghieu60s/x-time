@@ -1,11 +1,13 @@
 export type ShopeeFilterType = {
+  id: number;
   name: string;
-  isCompareLowerCase?: boolean;
-  values: {
+  values?: {
     field: string;
     condition: string;
     value: string;
   }[];
+  children?: number[];
+  isReadOnly?: boolean;
 };
 
 export type ShopeeSettingType = {

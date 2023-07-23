@@ -14,6 +14,7 @@ const apiScanProducts = '/api/ecoms/shopee/products/scan';
 
 export default function ShopeeDetect() {
   const [products, setProducts] = useState<ProductType[]>([]);
+  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
   const [productKeySelected, setProductKeySelected] = useState<string | null>(null);
 
   useEffect(() => {
@@ -100,7 +101,7 @@ export default function ShopeeDetect() {
 
   return (
     <div className="flex flex-col gap-4">
-      <form className="flex justify-between gap-2">
+      <form className="flex justify-between">
         <div className="flex items-center gap-4">
           <Button onClick={onSyncCart}>
             Sync Cart
@@ -124,7 +125,7 @@ export default function ShopeeDetect() {
           </div>
         </div>
       </form>
-      <ProductList products={products} onView={onViewProduct} onDelete={onDeleteProduct} />
+      <ProductList products={products}  onView={onViewProduct} onDelete={onDeleteProduct} />
       <ProductListDetail
         product={productSelected}
         onClose={() => setProductKeySelected(null)}

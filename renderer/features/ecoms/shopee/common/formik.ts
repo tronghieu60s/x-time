@@ -11,6 +11,7 @@ export type FormFilter = {
 export const initialValuesFilter: FormFilter = {
   filters: [
     {
+      id: 0,
       name: 'Filter 1',
       values: [
         {
@@ -19,6 +20,8 @@ export const initialValuesFilter: FormFilter = {
           value: 'Filter 1',
         },
       ],
+      children: [],
+      isReadOnly: false,
     },
   ],
 };

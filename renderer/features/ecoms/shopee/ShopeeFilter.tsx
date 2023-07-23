@@ -1,4 +1,4 @@
-import { Button, Label, Select, Table, Tabs, TextInput } from 'flowbite-react';
+import { Button, Checkbox, Dropdown, Label, Select, Table, Tabs, TextInput } from 'flowbite-react';
 import { useFormik } from 'formik';
 import { useCallback, useEffect } from 'react';
 import { FormFilter, initialValuesFilter } from './common/formik';
@@ -6,7 +6,7 @@ import { objectToArray } from '@/core/commonFuncs';
 import { ShopeeFilterType } from './common/types';
 
 type Props = {
-  filters?: ShopeeFilterType[];
+  filters: ShopeeFilterType[];
   onSave: (values: FormFilter) => void;
   onClose: () => void;
 };
@@ -108,7 +108,8 @@ export default function ShopeeFilter(props: Props) {
 
   const onDeleteFilterRow = useCallback(
     (index: number, jIndex: number) => {
-      const filter = values.filters[index].values.filter((_, kIndex) => jIndex !== kIndex);
+      const filter = values.filters[index].values || [];
+      filter.splice(jIndex, 1);
       values.filters[index].values = filter;
       setFieldValue('filters', values.filters);
     },
@@ -127,16 +128,16 @@ export default function ShopeeFilter(props: Props) {
         {values.filters.map((filter, index) => (
           <Tabs.Item key={index} title={filter.name}>
             <div className="flex flex-col gap-4">
-              <div className="flex justify-between items-end">
+              <div className="flex items-end gap-2">
                 <div className="flex flex-col gap-2">
                   <Label>Filter Name</Label>
                   <TextInput
                     name={`filters[${index}].name`}
                     value={values.filters[index].name}
                     onChange={formikBag.handleChange}
+                    disabled={filter.isReadOnly}
                   />
                 </div>
-                <div></div>
               </div>
               <Table>
                 <Table.Head>
@@ -211,15 +212,58 @@ export default function ShopeeFilter(props: Props) {
                       </Table.Row>
                     );
                   })}
+                  {!filter.values?.length && (
+                    <Table.Row>
+                      <Table.Cell colSpan={10}>
+                        <div className="flex justify-center">No Data</div>
+                      </Table.Cell>
+                    </Table.Row>
+                  )}
                 </Table.Body>
               </Table>
-              <div className="flex justify-end gap-2">
-                <Button size="sm" onClick={() => onAddFilter(index)}>
-                  Add Filter
-                </Button>
-                <Button size="sm" color="failure" onClick={() => onDeleteFilter(index)}>
-                  Delete Filter
-                </Button>
+              <div className="flex justify-between gap-2">
+                <div className="flex gap-2">
+                  <Dropdown label="Filter Children" size="sm">
+                    {filters
+                      .filter((filter) => filter.id)
+                      .map((filter, jIndex) => (
+                        <Dropdown.Item key={jIndex}>
+                          <div className="flex items-center gap-2">
+                            <Checkbox
+                              id={`filter-${jIndex}`}
+                              checked={
+                                (values.filters[index].children || [])?.indexOf(filter.id) > -1
+                              }
+                              onChange={() => {
+                                const children = values.filters[index].children || [];
+                                if (children.indexOf(filter.id) > -1) {
+                                  children.splice(children.indexOf(filter.id), 1);
+                                } else {
+                                  children.push(filter.id);
+                                }
+                                values.filters[index].children = children;
+                                setFieldValue('filters', values.filters);
+                              }}
+                            />
+                            <Label htmlFor={`filter-${jIndex}`}>{filter.name}</Label>
+                          </div>
+                        </Dropdown.Item>
+                      ))}
+                  </Dropdown>
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={() => onAddFilter(index)} disabled={filter.isReadOnly}>
+                    Add Filter
+                  </Button>
+                  <Button
+                    size="sm"
+                    color="failure"
+                    onClick={() => onDeleteFilter(index)}
+                    disabled={filter.isReadOnly}
+                  >
+                    Delete Filter
+                  </Button>
+                </div>
               </div>
             </div>
           </Tabs.Item>
@@ -239,3 +283,4 @@ export default function ShopeeFilter(props: Props) {
     </form>
   );
 }
+
