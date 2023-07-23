@@ -3,13 +3,14 @@ import ProductList from '@/features/products/ProductList';
 import ProductListDetail from '@/features/products/ProductListDetail';
 import { deleteProduct, productsRef, updateProduct } from '@/features/products/common/database';
 import { ProductType } from '@/features/products/common/types';
-import { onValue } from 'firebase/database';
+import { limitToFirst, onValue, query } from 'firebase/database';
 import { Button, TextInput } from 'flowbite-react';
 import { useFormik } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { initialValues } from './common/formik';
 
 const apiSyncCart = '/api/ecoms/shopee/cart/sync';
+const apiProducts = '/api/ecoms/shopee/products';
 const apiScanProducts = '/api/ecoms/shopee/products/scan';
 
 export default function ShopeeDetect() {
@@ -18,11 +19,15 @@ export default function ShopeeDetect() {
   const [productKeySelected, setProductKeySelected] = useState<string | null>(null);
 
   useEffect(() => {
-    onValue(productsRef, async (snapshot) => {
-      const data = objectToArray(snapshot.val() || {});
-      setProducts(data.reverse());
-    });
-  }, []);
+    const api = `${apiProducts}?page=${pagination.page}&limit=${pagination.limit}`;
+    fetch(api)
+      .then((res) => res.json())
+      .then((res) => {
+        const { products, pagination } = res.data;
+        setProducts(products);
+        setPagination(pagination);
+      });
+  }, [pagination.limit, pagination.page]);
 
   const formikBag = useFormik({
     initialValues,
@@ -59,6 +64,10 @@ export default function ShopeeDetect() {
 
   const onDeleteProduct = useCallback((key: string) => {
     deleteProduct(key);
+  }, []);
+
+  const onPageChange = useCallback((page: number) => {
+    setPagination((prev) => ({ ...prev, page }));
   }, []);
 
   const productSelected = useMemo(
@@ -103,12 +112,8 @@ export default function ShopeeDetect() {
     <div className="flex flex-col gap-4">
       <form className="flex justify-between">
         <div className="flex items-center gap-4">
-          <Button onClick={onSyncCart}>
-            Sync Cart
-          </Button>
-          <Button onClick={onScanProducts}>
-            Scan Products
-          </Button>
+          <Button onClick={onSyncCart}>Sync Cart</Button>
+          <Button onClick={onScanProducts}>Scan Products</Button>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
@@ -125,7 +130,13 @@ export default function ShopeeDetect() {
           </div>
         </div>
       </form>
-      <ProductList products={products}  onView={onViewProduct} onDelete={onDeleteProduct} />
+      <ProductList
+        products={products}
+        pagination={pagination}
+        onView={onViewProduct}
+        onDelete={onDeleteProduct}
+        onPageChange={onPageChange}
+      />
       <ProductListDetail
         product={productSelected}
         onClose={() => setProductKeySelected(null)}
@@ -135,3 +146,4 @@ export default function ShopeeDetect() {
     </div>
   );
 }
+

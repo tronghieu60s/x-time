@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'GET') {
     try {
       const page = Number(req.query.page || 1);
-      const limit = Number(req.query.limit || 20);
+      const limit = Number(req.query.limit || 10);
       const promotionid = Number(req.query.promotionid || 20);
       const filter = JSON.parse(String(req.query.filter) || '{}');
 
