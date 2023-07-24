@@ -1,9 +1,10 @@
 import ProductList from '@/features/products/ProductList';
 import { ProductType, PromotionType } from '@/features/products/common/types';
 import { Button, Select } from 'flowbite-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ShopeeFilterType } from './common/types';
 import CountdownTimer from '@/app/components/CountdownTimer';
+import { filterByConditions } from '@/core/commonFuncs';
 
 type Props = {
   filters: ShopeeFilterType[];
@@ -35,32 +36,20 @@ export default function ShopeePromotionDetail(props: Props) {
   useEffect(() => {
     onSetNumOfProducts(pagination.total);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [, pagination.total]);
+  }, [pagination.total]);
 
-  const getProducts = useCallback(() => {
+  useEffect(() => {
     setLoading(true);
-    const { values = [], children = [] } = filters[filterSelected] || {};
-    const filterChildren = children?.map((child) => filters[child]?.values) || [];
-    const filterProducts = JSON.stringify([...values, ...filterChildren.flat()]);
 
-    const apiProducts = `${apiPromotionProducts}?page=${page}&limit=${limit}&promotionid=${promotion.promotionid}&filter=${filterProducts}`;
-    fetch(apiProducts)
+    fetch(`${apiPromotionProducts}?promotionid=${promotion.promotionid}`)
       .then((res) => res.json())
       .then((res) => {
         if (!res.data) return;
-        const {
-          products,
-          pagination: { total },
-        } = res.data;
-        setProducts(products);
-        setPagination((prev) => ({ ...prev, total }));
+        setProducts(res.data);
+        setPagination((prev) => ({ ...prev, total: res.data.length }));
       })
       .finally(() => setLoading(false));
-  }, [filterSelected, filters, limit, page, promotion.promotionid]);
-
-  useEffect(() => {
-    getProducts();
-  }, [getProducts]);
+  }, [promotion.promotionid]);
 
   useEffect(() => {
     setPromotionEndTime(promotion.endTime);
@@ -87,6 +76,19 @@ export default function ShopeePromotionDetail(props: Props) {
     [products],
   );
 
+  const productsData = useMemo(() => {
+    const paginateProducts = products.slice((page - 1) * limit, page * limit);
+    if (filterSelected === -1) return paginateProducts;
+
+    const { values = [], children = [] } = filters[filterSelected] || {};
+    const filterChildren = children?.map((child) => filters[child]?.values) || [];
+    const filteredProducts = filterByConditions(paginateProducts, [
+      ...values,
+      ...filterChildren.flat(),
+    ]);
+    return filteredProducts;
+  }, [filters, filterSelected, limit, page, products]);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">
@@ -108,7 +110,7 @@ export default function ShopeePromotionDetail(props: Props) {
       </div>
       <ProductList
         loading={loading}
-        products={products}
+        products={productsData}
         pagination={pagination}
         showPriceHidden
         showLowestPrice={false}
