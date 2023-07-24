@@ -7,7 +7,7 @@ import { PaginationType } from '@/core/types';
 const statusDisabled = ['pending', 'processing'];
 
 type Props = {
-  loading: boolean;
+  loading?: boolean;
   products: ProductType[];
   pagination?: PaginationType;
   showPriceHidden?: boolean;
