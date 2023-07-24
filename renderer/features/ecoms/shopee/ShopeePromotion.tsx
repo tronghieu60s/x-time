@@ -108,7 +108,7 @@ export default function ShopeePromotion() {
       </div>
       <Tabs.Group aria-label="Full width tabs" style="fullWidth" onClick={onSwitchTabs}>
         {promotions.map((promotion, index) => (
-          <Tabs.Item key={index} title={`${promotion.name} (${numOfProducts[index] || 0})`}>
+          <Tabs.Item key={index} title={`${promotion.name.replace('Key Push', '')} (${numOfProducts[index] || 0})`}>
             {tabSelected.includes(index) && (
               <ShopeePromotionDetail
                 filters={filters}

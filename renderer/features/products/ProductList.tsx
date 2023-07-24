@@ -1,8 +1,10 @@
 import { formatCurrency } from '@/core/commonFuncs';
-import { Badge, Button, Pagination, Spinner, Table } from 'flowbite-react';
+import { Avatar, Badge, Button, Carousel, Modal, Pagination, Spinner, Table } from 'flowbite-react';
 import { getColorFromStatus, getTextFromStatus } from './common';
 import { ProductType } from './common/types';
 import { PaginationType } from '@/core/types';
+import { useState } from 'react';
+import Image from 'next/image';
 
 const statusDisabled = ['pending', 'processing'];
 
@@ -10,6 +12,7 @@ type Props = {
   loading?: boolean;
   products: ProductType[];
   pagination?: PaginationType;
+  showImage?: boolean;
   showPriceHidden?: boolean;
   showLowestPrice?: boolean;
   showHighestPrice?: boolean;
@@ -24,6 +27,7 @@ export default function ProductList(props: Props) {
     loading,
     products,
     pagination,
+    showImage = false,
     showPriceHidden = false,
     showLowestPrice = true,
     showHighestPrice = true,
@@ -32,11 +36,13 @@ export default function ProductList(props: Props) {
     onDelete,
     onPageChange,
   } = props;
+  const [previewImage, setPreviewImage] = useState('');
 
   return (
     <div className="flex flex-col gap-4 w-full">
       <Table striped>
         <Table.Head>
+          <Table.HeadCell hidden={!showImage}></Table.HeadCell>
           <Table.HeadCell style={{ width: 50 }}>STT</Table.HeadCell>
           <Table.HeadCell>Name</Table.HeadCell>
           <Table.HeadCell style={{ width: 150 }}>Stock</Table.HeadCell>
@@ -61,6 +67,13 @@ export default function ProductList(props: Props) {
               key={product.itemid}
               className="bg-white dark:border-gray-700 dark:bg-gray-800"
             >
+              <Table.Cell hidden={!showImage}>
+                <Avatar
+                  img={`https://down-vn.img.susercontent.com/file/${product.image || ''}`}
+                  size="sm"
+                  onClick={() => setPreviewImage(product.image || '')}
+                />
+              </Table.Cell>
               <Table.Cell>
                 {pagination ? index + 1 + (pagination.page - 1) * pagination.limit : index + 1}
               </Table.Cell>
@@ -115,7 +128,7 @@ export default function ProductList(props: Props) {
               <Table.Cell colSpan={10}>
                 <div className="flex justify-center items-center">
                   {loading && <Spinner size="sm" aria-label="Default status example" />}
-                  <div className='mt-1 ml-2'>No Data</div>
+                  <div className="mt-1 ml-2">No Data</div>
                 </div>
               </Table.Cell>
             </Table.Row>
@@ -137,6 +150,16 @@ export default function ProductList(props: Props) {
           />
         </div>
       )}
+      <Modal show={!!previewImage} dismissible onClose={() => setPreviewImage('')}>
+        <Modal.Body>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`https://down-vn.img.susercontent.com/file/${previewImage}`}
+            alt={previewImage}
+          />
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
+

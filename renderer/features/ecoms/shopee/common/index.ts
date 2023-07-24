@@ -13,6 +13,7 @@ export const getProductInfoFromPath = (path: string) => {
 export const getProductInfoFromResponse = (response: ResponseShopeeProduct) => {
   const itemid = response.itemid;
   const shopid = response?.shopid;
+  const image = response?.image;
   const name = response.name;
   const price = response.price / 100000;
   const priceHidden = response?.hidden_price_display || '';
@@ -33,6 +34,7 @@ export const getProductInfoFromResponse = (response: ResponseShopeeProduct) => {
   return {
     itemid,
     shopid,
+    image,
     name,
     price,
     priceHidden,

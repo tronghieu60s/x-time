@@ -18,6 +18,7 @@ export type ShopeeSettingType = {
 export type ResponseShopeeProduct = {
   itemid: number;
   shopid?: number;
+  image?: string;
   name: string;
   price: number;
   hidden_price_display?: string;

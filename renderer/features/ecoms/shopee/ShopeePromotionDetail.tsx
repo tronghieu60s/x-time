@@ -81,6 +81,7 @@ export default function ShopeePromotionDetail(props: Props) {
       filteredProducts = filterByConditions(products, [...values, ...filterChildren.flat()]);
     }
     const paginateProducts = filteredProducts.slice((page - 1) * limit, page * limit);
+    setPagination((prev) => ({ ...prev, total: filteredProducts.length }));
     onSetNumOfProducts(filteredProducts.length);
     return paginateProducts;
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -109,6 +110,7 @@ export default function ShopeePromotionDetail(props: Props) {
         loading={loading}
         products={productsData}
         pagination={pagination}
+        showImage
         showPriceHidden
         showLowestPrice={false}
         showHighestPrice={false}

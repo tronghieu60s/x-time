@@ -19,6 +19,7 @@ export type ProductType = {
   key: string;
   itemid: number;
   shopid: number;
+  image?: string;
   name: string;
   price: number;
   priceHidden?: string;
