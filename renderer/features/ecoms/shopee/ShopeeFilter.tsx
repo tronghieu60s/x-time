@@ -1,6 +1,6 @@
 import { Button, Checkbox, Dropdown, Label, Select, Table, Tabs, TextInput } from 'flowbite-react';
 import { useFormik } from 'formik';
-import { useCallback, useEffect } from 'react';
+import { ChangeEvent, useCallback, useEffect } from 'react';
 import { FormFilter, initialValuesFilter } from './common/formik';
 import { objectToArray } from '@/core/commonFuncs';
 import { ShopeeFilterType } from './common/types';
@@ -79,13 +79,12 @@ export default function ShopeeFilter(props: Props) {
     onSubmit: onSave,
   });
 
-  const { values, setFieldValue } = formikBag;
+  const { values, handleChange, setFieldValue } = formikBag;
 
   const onNewFilter = useCallback(() => {
-    setFieldValue('filters', [
-      ...values.filters,
-      { name: `Filter ${values.filters.length + 1}`, values: [] },
-    ]);
+    const filters = values.filters || [];
+    filters.push({ id: 0, name: `Filter ${filters.length + 1}`, values: [] });
+    setFieldValue('filters', filters);
   }, [setFieldValue, values.filters]);
 
   const onDeleteFilter = useCallback(
@@ -99,7 +98,7 @@ export default function ShopeeFilter(props: Props) {
   const onAddFilter = useCallback(
     (index: number) => {
       const filter = values.filters[index].values || [];
-      filter.push({ field: 'name', condition: 'extends', value: '' });
+      filter.push({ field: 'name', condition: 'equal', value: '' });
       values.filters[index].values = filter;
       setFieldValue('filters', values.filters);
     },
@@ -134,7 +133,7 @@ export default function ShopeeFilter(props: Props) {
                   <TextInput
                     name={`filters[${index}].name`}
                     value={values.filters[index].name}
-                    onChange={formikBag.handleChange}
+                    onChange={handleChange}
                     disabled={filter.isReadOnly}
                   />
                 </div>
@@ -157,9 +156,12 @@ export default function ShopeeFilter(props: Props) {
                       >
                         <Table.Cell>
                           <Select
-                            value={value.field}
-                            onChange={formikBag.handleChange}
                             name={`${name}.field`}
+                            value={value.field}
+                            onChange={(event) => {
+                              handleChange(event);
+                              setFieldValue(`${name}.value`, '');
+                            }}
                           >
                             {objectToArray(filteredFields).map((item, index) => (
                               <option key={index} value={item.key}>
@@ -170,9 +172,9 @@ export default function ShopeeFilter(props: Props) {
                         </Table.Cell>
                         <Table.Cell>
                           <Select
-                            value={value.condition}
-                            onChange={formikBag.handleChange}
                             name={`${name}.condition`}
+                            value={value.condition}
+                            onChange={handleChange}
                           >
                             {objectToArray(filteredCondition)
                               .filter((item) => item.fields.indexOf(type) > -1)
@@ -187,7 +189,7 @@ export default function ShopeeFilter(props: Props) {
                           {type === 'text' && (
                             <TextInput
                               value={value.value}
-                              onChange={formikBag.handleChange}
+                              onChange={handleChange}
                               name={`${name}.value`}
                             />
                           )}
@@ -195,7 +197,7 @@ export default function ShopeeFilter(props: Props) {
                             <TextInput
                               type="number"
                               value={value.value}
-                              onChange={formikBag.handleChange}
+                              onChange={handleChange}
                               name={`${name}.value`}
                             />
                           )}
@@ -283,4 +285,3 @@ export default function ShopeeFilter(props: Props) {
     </form>
   );
 }
-

@@ -23,20 +23,17 @@ export default function ShopeePromotionDetail(props: Props) {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
 
-  const [filterSelected, setFilterSelected] = useState(-1);
+  const [filterSelected, setFilterSelected] = useState(0);
   const [promotionEndTime, setPromotionEndTime] = useState(0);
   const [promotionStartTime, setPromotionStartTime] = useState(0);
 
   const { page, limit } = pagination;
 
   useEffect(() => {
-    setFilterSelected(filterGlobalSelected);
+    if (filterGlobalSelected > -1) {
+      setFilterSelected(filterGlobalSelected);
+    }
   }, [filterGlobalSelected]);
-
-  useEffect(() => {
-    onSetNumOfProducts(pagination.total);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.total]);
 
   useEffect(() => {
     setLoading(true);
@@ -77,16 +74,16 @@ export default function ShopeePromotionDetail(props: Props) {
   );
 
   const productsData = useMemo(() => {
-    const paginateProducts = products.slice((page - 1) * limit, page * limit);
-    if (filterSelected === -1) return paginateProducts;
-
-    const { values = [], children = [] } = filters[filterSelected] || {};
-    const filterChildren = children?.map((child) => filters[child]?.values) || [];
-    const filteredProducts = filterByConditions(paginateProducts, [
-      ...values,
-      ...filterChildren.flat(),
-    ]);
-    return filteredProducts;
+    let filteredProducts = products;
+    if (filterSelected > -1) {
+      const { values = [], children = [] } = filters[filterSelected] || {};
+      const filterChildren = children.map((child) => filters[child].values) || [];
+      filteredProducts = filterByConditions(products, [...values, ...filterChildren.flat()]);
+    }
+    const paginateProducts = filteredProducts.slice((page - 1) * limit, page * limit);
+    onSetNumOfProducts(filteredProducts.length);
+    return paginateProducts;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, filterSelected, limit, page, products]);
 
   return (

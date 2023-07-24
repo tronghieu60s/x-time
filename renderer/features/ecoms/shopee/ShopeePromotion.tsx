@@ -89,20 +89,22 @@ export default function ShopeePromotion() {
             Filter Products
           </Button>
         </div>
+      </div>
+      <div className="flex justify-between items-end">
+        <div className="flex">
+          <Select onChange={(e) => onFilterChange(Number(e.target.value))}>
+            {filters.map((filter, index) => (
+              <option key={index} value={index}>
+                {filter.name}
+              </option>
+            ))}
+          </Select>
+        </div>
         <div>
           <Button gradientDuoTone="greenToBlue">
             Sale: <CountdownTimer timer={promotionEndTime} onEnd={getPromotions} />
           </Button>
         </div>
-      </div>
-      <div className="flex">
-        <Select onChange={(e) => onFilterChange(Number(e.target.value))}>
-          {filters.map((filter, index) => (
-            <option key={index} value={index}>
-              {filter.name}
-            </option>
-          ))}
-        </Select>
       </div>
       <Tabs.Group aria-label="Full width tabs" style="fullWidth" onClick={onSwitchTabs}>
         {promotions.map((promotion, index) => (

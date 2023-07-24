@@ -24,7 +24,7 @@ export default function HomeFeature() {
   }, []);
 
   return (
-    <div className="container mx-auto py-4">
+    <div className="container p-4 mx-auto">
       <div className="flex flex-col gap-4">
         <div>
           <Button onClick={() => setIsShowLogin(true)}>{user ? 'Logged' : 'Login'}</Button>

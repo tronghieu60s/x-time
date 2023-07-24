@@ -7,6 +7,7 @@ import { useFormik } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { initialValues } from './common/formik';
 import { onValue } from 'firebase/database';
+import { objectToArray } from '@/core/commonFuncs';
 
 const apiSyncCart = '/api/ecoms/shopee/cart/sync';
 const apiProducts = '/api/ecoms/shopee/products';
@@ -18,22 +19,22 @@ export default function ShopeeDetect() {
   const [productKeySelected, setProductKeySelected] = useState<string | null>(null);
 
   useEffect(() => {
-    onValue(productsRef, () => {
-      const api = `${apiProducts}?page=${pagination.page}&limit=${pagination.limit}`;
-      fetch(api)
-        .then((res) => res.json())
-        .then((res) => {
-          const { products, pagination } = res.data;
-          setProducts(products);
-          setPagination(pagination);
-        });
+    onValue(productsRef, (snapshot) => {
+      const data = snapshot.val() || [];
+      const products = objectToArray(data).reverse();      
+      setProducts(products);
+      setPagination((prev) => ({ ...prev, total: products.length }));
     });
-  }, [pagination.limit, pagination.page]);
+  }, []);
+
+  const { page, limit } = pagination;
 
   const formikBag = useFormik({
     initialValues,
     onSubmit: () => {},
   });
+
+  const { values, setFieldValue } = formikBag;
 
   const onSyncCart = useCallback(() => {
     fetch(apiSyncCart, { method: 'POST' }).then((res) => {
@@ -48,8 +49,8 @@ export default function ShopeeDetect() {
   }, []);
 
   const onAddProduct = useCallback(async () => {
-    const { path } = formikBag.values;
-    formikBag.setFieldValue('path', '');
+    const { path } = values;
+    setFieldValue('path', '');
 
     const rootPath = path.split('?')[0];
     const splitRootPath = rootPath.split('.');
@@ -57,7 +58,7 @@ export default function ShopeeDetect() {
     const shopid = Number(splitRootPath.pop() || 0);
 
     await updateProduct({ itemid, shopid, status: 'pending' });
-  }, [formikBag]);
+  }, [values, setFieldValue]);
 
   const onViewProduct = useCallback((key: string) => {
     setProductKeySelected(key);
@@ -109,6 +110,11 @@ export default function ShopeeDetect() {
     [productSelected],
   );
 
+  const productsData = useMemo(() => {
+    const paginateProducts = products.slice((page - 1) * limit, page * limit);
+    return paginateProducts;
+  }, [products, page, limit]);
+
   return (
     <div className="flex flex-col gap-4">
       <form className="flex justify-between">
@@ -132,7 +138,7 @@ export default function ShopeeDetect() {
         </div>
       </form>
       <ProductList
-        products={products}
+        products={productsData}
         pagination={pagination}
         onView={onViewProduct}
         onDelete={onDeleteProduct}
@@ -147,4 +153,3 @@ export default function ShopeeDetect() {
     </div>
   );
 }
-
