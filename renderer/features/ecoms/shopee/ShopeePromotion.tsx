@@ -2,7 +2,7 @@ import CountdownTimer from '@/app/components/CountdownTimer';
 import { PromotionType } from '@/features/products/common/types';
 import { child, onValue } from 'firebase/database';
 import { Button, Modal, Select, Tabs } from 'flowbite-react';
-import { useCallback, useEffect, useState } from 'react';
+import { MouseEvent, useCallback, useEffect, useState } from 'react';
 import ShopeeFilter from './ShopeeFilter';
 import ShopeePromotionDetail from './ShopeePromotionDetail';
 import { filterSettingRef, updateFilters } from './common/database';
@@ -15,6 +15,8 @@ export default function ShopeePromotion() {
   const [filters, setFilters] = useState<ShopeeFilterType[]>([]);
   const [filterSelected, setFilterSelected] = useState(-1);
   const [isShowFilter, setIsShowFilter] = useState(false);
+
+  const [tabSelected, setTabSelected] = useState(0);
 
   const [promotions, setPromotions] = useState<PromotionType[]>([]);
   const [promotionEndTime, setPromotionEndTime] = useState(0);
@@ -46,6 +48,17 @@ export default function ShopeePromotion() {
   useEffect(() => {
     getPromotions();
   }, [getPromotions]);
+
+  const onSwitchTabs = useCallback((event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+    const target = event.target as HTMLDivElement;
+    const tabIndexId = target.getAttribute('id');
+    if (!tabIndexId) return;
+
+    const tabIndex = Number(tabIndexId.split('-').pop());
+    if (isNaN(tabIndex)) return;
+
+    setTabSelected(tabIndex);
+  }, []);
 
   const onSaveFilter = useCallback((values) => {
     const filters = values.filters.map((filter, index) => ({ ...filter, id: index }));
@@ -87,16 +100,22 @@ export default function ShopeePromotion() {
           ))}
         </Select>
       </div>
-      <Tabs.Group aria-label="Full width tabs" style="fullWidth">
+      <Tabs.Group aria-label="Full width tabs" style="fullWidth" onClick={onSwitchTabs}>
         {promotions.map((promotion, index) => (
-          <Tabs.Item key={index} title={`${promotion.name} (${numOfProducts[index] || 0})`}>
-            <ShopeePromotionDetail
-              filters={filters}
-              filterGlobalSelected={filterSelected}
-              promotion={promotion}
-              currentPromotion={index === 0}
-              onSetNumOfProducts={(number) => onSetNumOfProducts(index, number)}
-            />
+          <Tabs.Item
+            key={index}
+            title={`${promotion.name} (${numOfProducts[index] || 0})`}
+            onClick={(props) => console.log(props)}
+          >
+            {tabSelected === index && (
+              <ShopeePromotionDetail
+                filters={filters}
+                filterGlobalSelected={filterSelected}
+                promotion={promotion}
+                currentPromotion={index === 0}
+                onSetNumOfProducts={(number) => onSetNumOfProducts(index, number)}
+              />
+            )}
           </Tabs.Item>
         ))}
       </Tabs.Group>
@@ -113,4 +132,3 @@ export default function ShopeePromotion() {
     </div>
   );
 }
-
