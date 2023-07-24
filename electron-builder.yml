@@ -1,6 +1,6 @@
-appId: com.shopeee.test
-productName: Shopee Test
-copyright: Copyright © 2023 Shopee Test
+appId: com.tronghieus.xtime
+productName: XTimeTools
+copyright: Copyright © 2023 XTimeTools
 directories:
   output: dist
   buildResources: resources
