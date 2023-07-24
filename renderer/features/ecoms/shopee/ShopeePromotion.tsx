@@ -16,7 +16,7 @@ export default function ShopeePromotion() {
   const [filterSelected, setFilterSelected] = useState(-1);
   const [isShowFilter, setIsShowFilter] = useState(false);
 
-  const [tabSelected, setTabSelected] = useState(0);
+  const [tabSelected, setTabSelected] = useState([0]);
 
   const [promotions, setPromotions] = useState<PromotionType[]>([]);
   const [promotionEndTime, setPromotionEndTime] = useState(0);
@@ -57,7 +57,11 @@ export default function ShopeePromotion() {
     const tabIndex = Number(tabIndexId.split('-').pop());
     if (isNaN(tabIndex)) return;
 
-    setTabSelected(tabIndex);
+    setTabSelected((prev) => {
+      const newTabSelected = [...prev];
+      if (!newTabSelected.includes(tabIndex)) newTabSelected.push(tabIndex);
+      return newTabSelected;
+    });
   }, []);
 
   const onSaveFilter = useCallback((values) => {
@@ -107,7 +111,7 @@ export default function ShopeePromotion() {
             title={`${promotion.name} (${numOfProducts[index] || 0})`}
             onClick={(props) => console.log(props)}
           >
-            {tabSelected === index && (
+            {tabSelected.includes(index) && (
               <ShopeePromotionDetail
                 filters={filters}
                 filterGlobalSelected={filterSelected}

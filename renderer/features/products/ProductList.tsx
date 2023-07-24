@@ -1,5 +1,5 @@
 import { formatCurrency } from '@/core/commonFuncs';
-import { Badge, Button, Pagination, Table } from 'flowbite-react';
+import { Badge, Button, Pagination, Spinner, Table } from 'flowbite-react';
 import { getColorFromStatus, getTextFromStatus } from './common';
 import { ProductType } from './common/types';
 import { PaginationType } from '@/core/types';
@@ -7,6 +7,7 @@ import { PaginationType } from '@/core/types';
 const statusDisabled = ['pending', 'processing'];
 
 type Props = {
+  loading: boolean;
   products: ProductType[];
   pagination?: PaginationType;
   showPriceHidden?: boolean;
@@ -20,6 +21,7 @@ type Props = {
 
 export default function ProductList(props: Props) {
   const {
+    loading,
     products,
     pagination,
     showPriceHidden = false,
@@ -111,7 +113,10 @@ export default function ProductList(props: Props) {
           {!products.length && (
             <Table.Row>
               <Table.Cell colSpan={10}>
-                <div className="flex justify-center">No Data</div>
+                <div className="flex justify-center items-center">
+                  {loading && <Spinner size="sm" aria-label="Default status example" />}
+                  <div className='mt-1 ml-2'>No Data</div>
+                </div>
               </Table.Cell>
             </Table.Row>
           )}
@@ -121,7 +126,7 @@ export default function ProductList(props: Props) {
         <div className="flex justify-between items-center">
           <div>
             <p className="text-base">
-              Page: {pagination.page} / {Math.ceil(pagination.total / pagination.limit)  || 1}
+              Page: {pagination.page} / {Math.ceil(pagination.total / pagination.limit) || 1}
             </p>
           </div>
           <Pagination

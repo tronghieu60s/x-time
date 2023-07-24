@@ -29,10 +29,6 @@ export default function ShopeeHome(props: Props) {
       });
   }, []);
 
-  if (!user) {
-    return <div>Please login to use this feature.</div>;
-  }
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">
@@ -49,7 +45,7 @@ export default function ShopeeHome(props: Props) {
       </div>
       <Tabs.Group aria-label="Default tabs" style="default">
         <Tabs.Item active title="Shopee Detect">
-          <ShopeeDetect />
+          {user ? <ShopeeDetect /> : <div>Please login to use this feature.</div>}
         </Tabs.Item>
         <Tabs.Item title="Shopee Promotion">
           <ShopeePromotion />
@@ -64,4 +60,3 @@ export default function ShopeeHome(props: Props) {
     </div>
   );
 }
-

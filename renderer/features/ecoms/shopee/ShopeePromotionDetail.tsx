@@ -18,6 +18,7 @@ const apiPromotionProducts = '/api/ecoms/shopee/promotions/products';
 export default function ShopeePromotionDetail(props: Props) {
   const { filters, filterGlobalSelected, promotion, currentPromotion, onSetNumOfProducts } = props;
 
+  const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<ProductType[]>([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
 
@@ -33,10 +34,11 @@ export default function ShopeePromotionDetail(props: Props) {
 
   useEffect(() => {
     onSetNumOfProducts(pagination.total);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [, pagination.total]);
 
   const getProducts = useCallback(() => {
+    setLoading(true);
     const { values = [], children = [] } = filters[filterSelected] || {};
     const filterChildren = children?.map((child) => filters[child]?.values) || [];
     const filterProducts = JSON.stringify([...values, ...filterChildren.flat()]);
@@ -52,7 +54,8 @@ export default function ShopeePromotionDetail(props: Props) {
         } = res.data;
         setProducts(products);
         setPagination((prev) => ({ ...prev, total }));
-      });
+      })
+      .finally(() => setLoading(false));
   }, [filterSelected, filters, limit, page, promotion.promotionid]);
 
   useEffect(() => {
@@ -104,6 +107,7 @@ export default function ShopeePromotionDetail(props: Props) {
         </div>
       </div>
       <ProductList
+        loading={loading}
         products={products}
         pagination={pagination}
         showPriceHidden
@@ -116,4 +120,3 @@ export default function ShopeePromotionDetail(props: Props) {
     </div>
   );
 }
-
