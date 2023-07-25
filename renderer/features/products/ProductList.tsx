@@ -1,18 +1,33 @@
 import { formatCurrency } from '@/core/commonFuncs';
-import { Avatar, Badge, Button, Carousel, Modal, Pagination, Spinner, Table } from 'flowbite-react';
+import { PaginationType } from '@/core/types';
+import {
+  Avatar,
+  Badge,
+  Button,
+  CustomFlowbiteTheme,
+  Modal,
+  Pagination,
+  Spinner,
+  Table
+} from 'flowbite-react';
+import { useState } from 'react';
 import { getColorFromStatus, getTextFromStatus } from './common';
 import { ProductType } from './common/types';
-import { PaginationType } from '@/core/types';
-import { useState } from 'react';
-import Image from 'next/image';
 
 const statusDisabled = ['pending', 'processing'];
+
+const customTableTheme: CustomFlowbiteTheme['table'] = {
+  root: {
+    wrapper: 'relative overflow-x-auto',
+  },
+};
 
 type Props = {
   loading?: boolean;
   products: ProductType[];
   pagination?: PaginationType;
   showImage?: boolean;
+  showPrice?: boolean;
   showPriceHidden?: boolean;
   showLowestPrice?: boolean;
   showHighestPrice?: boolean;
@@ -28,6 +43,7 @@ export default function ProductList(props: Props) {
     products,
     pagination,
     showImage = false,
+    showPrice = true,
     showPriceHidden = false,
     showLowestPrice = true,
     showHighestPrice = true,
@@ -40,13 +56,15 @@ export default function ProductList(props: Props) {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <Table striped>
+      <Table striped theme={customTableTheme}>
         <Table.Head>
-          <Table.HeadCell hidden={!showImage}></Table.HeadCell>
+          <Table.HeadCell style={{ width: 80 }} hidden={!showImage}></Table.HeadCell>
           <Table.HeadCell style={{ width: 50 }}>STT</Table.HeadCell>
           <Table.HeadCell>Name</Table.HeadCell>
           <Table.HeadCell style={{ width: 150 }}>Stock</Table.HeadCell>
-          <Table.HeadCell style={{ width: 150 }}>Price</Table.HeadCell>
+          <Table.HeadCell style={{ width: 150 }} hidden={!showPrice}>
+            Price
+          </Table.HeadCell>
           <Table.HeadCell style={{ width: 150 }} hidden={!showPriceHidden}>
             Price Hidden
           </Table.HeadCell>
@@ -81,12 +99,8 @@ export default function ProductList(props: Props) {
                 {product.name || '--- Unknown ---'}
               </Table.Cell>
               <Table.Cell>{product.stock || 0}</Table.Cell>
-              <Table.Cell>
-                {product?.priceHidden
-                  ? `~ ${product.priceHidden.replaceAll('?', '9')} ₫`
-                  : formatCurrency(product.price || 0)}
-              </Table.Cell>
-              <Table.Cell hidden={!showPriceHidden}>{product?.priceHidden || '—'} ₫</Table.Cell>
+              <Table.Cell hidden={!showPrice}>{formatCurrency(product.price || 0)}</Table.Cell>
+              <Table.Cell hidden={!showPriceHidden}>{product?.priceHidden || 0} ₫</Table.Cell>
               <Table.Cell hidden={!showLowestPrice}>
                 {formatCurrency(product.lowestPrice || product.price || 0)}
               </Table.Cell>
@@ -152,11 +166,13 @@ export default function ProductList(props: Props) {
       )}
       <Modal show={!!previewImage} dismissible onClose={() => setPreviewImage('')}>
         <Modal.Body>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`https://down-vn.img.susercontent.com/file/${previewImage}`}
-            alt={previewImage}
-          />
+          <div className="flex justify-center items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`https://down-vn.img.susercontent.com/file/${previewImage}`}
+              alt={previewImage}
+            />
+          </div>
         </Modal.Body>
       </Modal>
     </div>

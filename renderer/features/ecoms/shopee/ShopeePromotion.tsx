@@ -1,12 +1,24 @@
 import CountdownTimer from '@/app/components/CountdownTimer';
 import { PromotionType } from '@/features/products/common/types';
 import { child, onValue } from 'firebase/database';
-import { Button, Modal, Select, Tabs } from 'flowbite-react';
+import { Button, CustomFlowbiteTheme, Modal, Select, Tabs } from 'flowbite-react';
 import { MouseEvent, useCallback, useEffect, useState } from 'react';
 import ShopeeFilter from './ShopeeFilter';
 import ShopeePromotionDetail from './ShopeePromotionDetail';
 import { filterSettingRef, updateFilters } from './common/database';
 import { ShopeeFilterType } from './common/types';
+
+const customTabTheme: CustomFlowbiteTheme['tab'] = {
+  tablist: {
+    tabitem: {
+      styles: {
+        fullWidth: {
+          base: 'ml-0 first:ml-0 w-1/2 md:w-full rounded-none flex',
+        },
+      },
+    },
+  },
+};
 
 const filterAll = { id: 0, name: 'All Products', values: [], isReadOnly: true };
 const apiPromotions = '/api/ecoms/shopee/promotions';
@@ -90,7 +102,7 @@ export default function ShopeePromotion() {
           </Button>
         </div>
       </div>
-      <div className="flex justify-between items-end">
+      <div className="flex flex-wrap justify-between items-end">
         <div className="flex">
           <Select onChange={(e) => onFilterChange(Number(e.target.value))}>
             {filters.map((filter, index) => (
@@ -106,9 +118,17 @@ export default function ShopeePromotion() {
           </Button>
         </div>
       </div>
-      <Tabs.Group aria-label="Full width tabs" style="fullWidth" onClick={onSwitchTabs}>
+      <Tabs.Group
+        style="fullWidth"
+        onClick={onSwitchTabs}
+        className="flex flex-wrap md:flex-nowrap"
+        theme={customTabTheme}
+      >
         {promotions.map((promotion, index) => (
-          <Tabs.Item key={index} title={`${promotion.name.replace('Key Push', '')} (${numOfProducts[index] || 0})`}>
+          <Tabs.Item
+            key={index}
+            title={`${promotion.name.replace('Key Push', '')} (${numOfProducts[index] || 0})`}
+          >
             {tabSelected.includes(index) && (
               <ShopeePromotionDetail
                 filters={filters}
@@ -134,3 +154,4 @@ export default function ShopeePromotion() {
     </div>
   );
 }
+
