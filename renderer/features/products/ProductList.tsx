@@ -8,7 +8,7 @@ import {
   Modal,
   Pagination,
   Spinner,
-  Table
+  Table,
 } from 'flowbite-react';
 import { useState } from 'react';
 import { getColorFromStatus, getTextFromStatus } from './common';
@@ -55,29 +55,29 @@ export default function ProductList(props: Props) {
   const [previewImage, setPreviewImage] = useState('');
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col gap-4">
       <Table striped theme={customTableTheme}>
         <Table.Head>
-          <Table.HeadCell style={{ width: 80 }} hidden={!showImage}></Table.HeadCell>
-          <Table.HeadCell style={{ width: 50 }}>STT</Table.HeadCell>
+          <Table.HeadCell hidden={!showImage}></Table.HeadCell>
+          <Table.HeadCell className="w-10">STT</Table.HeadCell>
           <Table.HeadCell>Name</Table.HeadCell>
-          <Table.HeadCell style={{ width: 150 }}>Stock</Table.HeadCell>
-          <Table.HeadCell style={{ width: 150 }} hidden={!showPrice}>
+          <Table.HeadCell className="w-10">Stock</Table.HeadCell>
+          <Table.HeadCell className="w-15" hidden={!showPrice}>
             Price
           </Table.HeadCell>
-          <Table.HeadCell style={{ width: 150 }} hidden={!showPriceHidden}>
+          <Table.HeadCell className="w-15" hidden={!showPriceHidden}>
             Price Hidden
           </Table.HeadCell>
-          <Table.HeadCell style={{ width: 150 }} hidden={!showLowestPrice}>
+          <Table.HeadCell className="w-15" hidden={!showLowestPrice}>
             Lowest Price
           </Table.HeadCell>
-          <Table.HeadCell style={{ width: 150 }} hidden={!showHighestPrice}>
+          <Table.HeadCell className="w-15" hidden={!showHighestPrice}>
             Highest Price
           </Table.HeadCell>
-          <Table.HeadCell style={{ width: 150 }} hidden={!showStatus}>
+          <Table.HeadCell className="w-15" hidden={!showStatus}>
             Status
           </Table.HeadCell>
-          <Table.HeadCell style={{ width: 150 }}>Action</Table.HeadCell>
+          <Table.HeadCell className="w-15">Action</Table.HeadCell>
         </Table.Head>
         <Table.Body className="divide-y">
           {products?.map((product, index) => (
@@ -88,8 +88,8 @@ export default function ProductList(props: Props) {
               <Table.Cell hidden={!showImage}>
                 <Avatar
                   img={`https://down-vn.img.susercontent.com/file/${product.image || ''}`}
-                  size="sm"
                   onClick={() => setPreviewImage(product.image || '')}
+                  className='w-10'
                 />
               </Table.Cell>
               <Table.Cell>
@@ -178,4 +178,3 @@ export default function ProductList(props: Props) {
     </div>
   );
 }
-

@@ -108,7 +108,7 @@ export default function ShopeePromotionDetail(props: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-full flex flex-wrap justify-between items-end">
+      <div className="flex flex-wrap justify-between items-end">
         <div className="w-full md:w-1/2 flex">
           <Button outline gradientDuoTone="greenToBlue">
             {currentPromotion ? 'Flash Sale' : 'Upcoming'}:{' '}
@@ -116,7 +116,7 @@ export default function ShopeePromotionDetail(props: Props) {
           </Button>
         </div>
         <div className="w-full md:w-1/2 flex justify-end items-end gap-2">
-          <div className="w-1/2 flex">
+          <div className="w-1/2 flex justify-end">
             <Select value={filterSelected} onChange={(e) => onFilterChange(Number(e.target.value))}>
               {filters.map((filter, index) => (
                 <option key={index} value={index}>

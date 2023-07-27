@@ -13,7 +13,7 @@ const customTabTheme: CustomFlowbiteTheme['tab'] = {
     tabitem: {
       styles: {
         fullWidth: {
-          base: 'ml-0 first:ml-0 w-1/2 md:w-full rounded-none flex',
+          base: 'ml-0 w-1/2 md:w-full last:w-full rounded-none flex',
         },
       },
     },
@@ -121,7 +121,7 @@ export default function ShopeePromotion() {
       <Tabs.Group
         style="fullWidth"
         onClick={onSwitchTabs}
-        className="flex flex-wrap md:flex-nowrap"
+        className="[&>div]:w-full flex flex-wrap md:flex-nowrap"
         theme={customTabTheme}
       >
         {promotions.map((promotion, index) => (
