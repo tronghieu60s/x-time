@@ -20,7 +20,6 @@ export const initialValuesFilter: FormFilter = {
           value: 'Filter 1',
         },
       ],
-      children: [],
       isReadOnly: false,
     },
   ],

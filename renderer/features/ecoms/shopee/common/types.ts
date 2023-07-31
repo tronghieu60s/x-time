@@ -6,7 +6,6 @@ export type ShopeeFilterType = {
     condition: string;
     value: string;
   }[];
-  children?: number[];
   isReadOnly?: boolean;
 };
 

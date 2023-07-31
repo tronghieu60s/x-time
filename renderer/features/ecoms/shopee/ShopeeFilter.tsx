@@ -224,35 +224,7 @@ export default function ShopeeFilter(props: Props) {
                 </Table.Body>
               </Table>
               <div className="flex justify-between gap-2">
-                <div className="flex gap-2">
-                  <Dropdown label="Filter Children" size="sm">
-                    {filters
-                      .filter((filter) => filter.id)
-                      .map((filter, jIndex) => (
-                        <Dropdown.Item key={jIndex}>
-                          <div className="flex items-center gap-2">
-                            <Checkbox
-                              id={`filter-${jIndex}`}
-                              checked={
-                                (values.filters[index].children || [])?.indexOf(filter.id) > -1
-                              }
-                              onChange={() => {
-                                const children = values.filters[index].children || [];
-                                if (children.indexOf(filter.id) > -1) {
-                                  children.splice(children.indexOf(filter.id), 1);
-                                } else {
-                                  children.push(filter.id);
-                                }
-                                values.filters[index].children = children;
-                                setFieldValue('filters', values.filters);
-                              }}
-                            />
-                            <Label htmlFor={`filter-${jIndex}`}>{filter.name}</Label>
-                          </div>
-                        </Dropdown.Item>
-                      ))}
-                  </Dropdown>
-                </div>
+                <div></div>
                 <div className="flex gap-2">
                   <Button size="sm" onClick={() => onAddFilter(index)} disabled={filter.isReadOnly}>
                     Add Filter
@@ -285,3 +257,4 @@ export default function ShopeeFilter(props: Props) {
     </form>
   );
 }
+

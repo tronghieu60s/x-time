@@ -5,7 +5,6 @@ import { Button, CustomFlowbiteTheme, Modal, Select, Tabs } from 'flowbite-react
 import { MouseEvent, useCallback, useEffect, useState } from 'react';
 import ShopeeFilter from './ShopeeFilter';
 import ShopeePromotionDetail from './ShopeePromotionDetail';
-import { filterSettingRef, updateFilters } from './common/database';
 import { ShopeeFilterType } from './common/types';
 
 const customTabTheme: CustomFlowbiteTheme['tab'] = {
@@ -97,7 +96,7 @@ export default function ShopeePromotion() {
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">
         <div>
-          <Button gradientDuoTone="purpleToPink" onClick={() => setIsShowFilter(true)}>
+          <Button gradientDuoTone="greenToBlue" onClick={() => setIsShowFilter(true)}>
             Filter Products
           </Button>
         </div>

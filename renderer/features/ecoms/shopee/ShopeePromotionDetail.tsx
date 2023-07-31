@@ -95,9 +95,8 @@ export default function ShopeePromotionDetail(props: Props) {
     if (search.length > 0) {
       filteredProducts = filterByConditions(products, search);
     } else if (filterSelected > -1) {
-      const { values = [], children = [] } = filters[filterSelected] || {};
-      const filterChildren = children.map((child) => filters[child].values) || [];
-      filteredProducts = filterByConditions(products, [...values, ...filterChildren.flat()]);
+      const { values = [] } = filters[filterSelected] || {};
+      filteredProducts = filterByConditions(products, values);
     }
     const paginateProducts = filteredProducts.slice((page - 1) * limit, page * limit);
     setPagination((prev) => ({ ...prev, total: filteredProducts.length }));
