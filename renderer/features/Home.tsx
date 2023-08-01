@@ -1,5 +1,5 @@
 import { Tabs } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import ShopeeHome from './ecoms/shopee/ShopeeHome';
 
 export default function HomeFeature() {

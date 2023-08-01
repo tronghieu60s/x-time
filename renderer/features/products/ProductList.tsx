@@ -58,7 +58,7 @@ export default function ProductList(props: Props) {
     <div className="flex flex-col gap-4">
       <Table striped theme={customTableTheme}>
         <Table.Head>
-          <Table.HeadCell hidden={!showImage}></Table.HeadCell>
+          <Table.HeadCell className='w-20' hidden={!showImage}></Table.HeadCell>
           <Table.HeadCell className="w-10">STT</Table.HeadCell>
           <Table.HeadCell>Name</Table.HeadCell>
           <Table.HeadCell className="w-10">Stock</Table.HeadCell>

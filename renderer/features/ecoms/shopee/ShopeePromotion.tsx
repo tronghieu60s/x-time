@@ -1,6 +1,6 @@
 import CountdownTimer from '@/app/components/CountdownTimer';
+import { getStorageByKey, setStorageByKey } from '@/core/storage';
 import { PromotionType } from '@/features/products/common/types';
-import { child, onValue } from 'firebase/database';
 import { Button, CustomFlowbiteTheme, Modal, Select, Tabs } from 'flowbite-react';
 import { MouseEvent, useCallback, useEffect, useState } from 'react';
 import ShopeeFilter from './ShopeeFilter';
@@ -19,7 +19,13 @@ const customTabTheme: CustomFlowbiteTheme['tab'] = {
   },
 };
 
-const filterAll = { id: 0, name: 'All Products', values: [], isReadOnly: true };
+const filterAll = {
+  id: 0,
+  name: 'Tất Cả Sản Phẩm',
+  values: [],
+  isReadOnly: true,
+};
+
 const apiPromotions = '/api/ecoms/shopee/promotions';
 
 export default function ShopeePromotion() {
@@ -34,15 +40,9 @@ export default function ShopeePromotion() {
   const [numOfProducts, setNumOfProducts] = useState<number[]>([]);
 
   useEffect(() => {
-    onValue(child(filterSettingRef, 'promotion'), async (snapshot) => {
-      const filters = snapshot.val() || [];
-      const isHasFilterAll = filters?.some((filter: any) => filter.id === 0);
-      if (!isHasFilterAll) {
-        setFilters([filterAll, ...filters]);
-        return;
-      }
-      setFilters(snapshot.val());
-    });
+    const filters = getStorageByKey('filters') || [];
+    const isHasFilterAll = filters?.some((filter: any) => filter.id === 0);
+    setFilters(isHasFilterAll ? filters : [filterAll, ...filters]);
   }, []);
 
   const getPromotions = useCallback(() => {
@@ -56,9 +56,7 @@ export default function ShopeePromotion() {
       });
   }, []);
 
-  useEffect(() => {
-    getPromotions();
-  }, [getPromotions]);
+  useEffect(() => getPromotions(), [getPromotions]);
 
   const onSwitchTabs = useCallback((event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     const target = event.target as HTMLDivElement;
@@ -75,14 +73,14 @@ export default function ShopeePromotion() {
     });
   }, []);
 
-  const onSaveFilter = useCallback((values) => {
-    const filters = values.filters.map((filter, index) => ({ ...filter, id: index }));
-    updateFilters('promotion', filters);
-  }, []);
-
-  const onFilterChange = useCallback((index: number) => {
-    setFilterSelected(index);
-  }, []);
+  const onSaveFilter = useCallback(
+    (values) => {
+      const filters = values.filters.map((filter, index) => ({ ...filter, id: index }));
+      setFilters(filters);
+      setStorageByKey('filters', filters);
+    },
+    [],
+  );
 
   const onSetNumOfProducts = useCallback((index: number, number: number) => {
     setNumOfProducts((prev) => {
@@ -97,13 +95,13 @@ export default function ShopeePromotion() {
       <div className="flex justify-between">
         <div>
           <Button gradientDuoTone="greenToBlue" onClick={() => setIsShowFilter(true)}>
-            Filter Products
+            Lọc Sản Phẩm
           </Button>
         </div>
       </div>
       <div className="flex flex-wrap justify-between items-end">
         <div className="flex">
-          <Select onChange={(e) => onFilterChange(Number(e.target.value))}>
+          <Select onChange={(e) => setFilterSelected(Number(e.target.value))}>
             {filters.map((filter, index) => (
               <option key={index} value={index}>
                 {filter.name}
@@ -118,10 +116,10 @@ export default function ShopeePromotion() {
         </div>
       </div>
       <Tabs.Group
+        theme={customTabTheme}
         style="fullWidth"
         onClick={onSwitchTabs}
         className="[&>div]:w-full flex flex-wrap md:flex-nowrap"
-        theme={customTabTheme}
       >
         {promotions.map((promotion, index) => (
           <Tabs.Item
@@ -141,7 +139,7 @@ export default function ShopeePromotion() {
         ))}
       </Tabs.Group>
       <Modal size="4xl" show={isShowFilter} dismissible onClose={() => setIsShowFilter(false)}>
-        <Modal.Header>Filter Products</Modal.Header>
+        <Modal.Header>Lọc Sản Phẩm</Modal.Header>
         <Modal.Body>
           <ShopeeFilter
             filters={filters}

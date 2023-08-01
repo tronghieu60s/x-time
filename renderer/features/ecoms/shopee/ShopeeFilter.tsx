@@ -1,8 +1,8 @@
-import { Button, Checkbox, Dropdown, Label, Select, Table, Tabs, TextInput } from 'flowbite-react';
-import { useFormik } from 'formik';
-import { ChangeEvent, useCallback, useEffect } from 'react';
-import { FormFilter, initialValuesFilter } from './common/formik';
 import { objectToArray } from '@/core/commonFuncs';
+import { Button, Label, Select, Table, Tabs, TabsRef, TextInput } from 'flowbite-react';
+import { useFormik } from 'formik';
+import { useCallback, useEffect, useRef } from 'react';
+import { FormFilter, initialValuesFilter } from './common/formik';
 import { ShopeeFilterType } from './common/types';
 
 type Props = {
@@ -68,6 +68,8 @@ const filteredCondition = {
 export default function ShopeeFilter(props: Props) {
   const { filters, onSave, onClose } = props;
 
+  const tabsRef = useRef<TabsRef>(null);
+
   useEffect(() => {
     if (!filters) return;
     formikBag.setFieldValue('filters', filters);
@@ -83,14 +85,16 @@ export default function ShopeeFilter(props: Props) {
 
   const onNewFilter = useCallback(() => {
     const filters = values.filters || [];
-    filters.push({ id: 0, name: `Filter ${filters.length + 1}`, values: [] });
+    filters.push({ id: 0, name: `Bộ Lọc ${filters.length + 1}`, values: [] });
     setFieldValue('filters', filters);
+    tabsRef.current?.setActiveTab(filters.length - 1);
   }, [setFieldValue, values.filters]);
 
   const onDeleteFilter = useCallback(
     (index: number) => {
       const filters = values.filters.filter((_, jIndex) => index !== jIndex);
       setFieldValue('filters', filters);
+      tabsRef.current?.setActiveTab(0);
     },
     [setFieldValue, values.filters],
   );
@@ -123,13 +127,13 @@ export default function ShopeeFilter(props: Props) {
         formikBag.handleSubmit(e);
       }}
     >
-      <Tabs.Group aria-label="Pills" style="pills">
+      <Tabs.Group ref={tabsRef} style="default">
         {values.filters.map((filter, index) => (
           <Tabs.Item key={index} title={filter.name}>
             <div className="flex flex-col gap-4">
               <div className="flex items-end gap-2">
                 <div className="flex flex-col gap-2">
-                  <Label>Filter Name</Label>
+                  <Label>Tên Bộ Lọc</Label>
                   <TextInput
                     name={`filters[${index}].name`}
                     value={values.filters[index].name}
@@ -208,7 +212,7 @@ export default function ShopeeFilter(props: Props) {
                             gradientDuoTone="pinkToOrange"
                             onClick={() => onDeleteFilterRow(index, jIndex)}
                           >
-                            Delete
+                            Xoá
                           </Button>
                         </Table.Cell>
                       </Table.Row>
@@ -227,7 +231,7 @@ export default function ShopeeFilter(props: Props) {
                 <div></div>
                 <div className="flex gap-2">
                   <Button size="sm" onClick={() => onAddFilter(index)} disabled={filter.isReadOnly}>
-                    Add Filter
+                    Thêm Bộ Lọc
                   </Button>
                   <Button
                     size="sm"
@@ -235,7 +239,7 @@ export default function ShopeeFilter(props: Props) {
                     onClick={() => onDeleteFilter(index)}
                     disabled={filter.isReadOnly}
                   >
-                    Delete Filter
+                    Xoá Bộ Lọc
                   </Button>
                 </div>
               </div>
@@ -245,12 +249,12 @@ export default function ShopeeFilter(props: Props) {
       </Tabs.Group>
       <div className="w-full flex justify-between pt-4">
         <div className="flex gap-2">
-          <Button onClick={onNewFilter}>New Filter</Button>
+          <Button onClick={onNewFilter}>Tạo Bộ Lọc Mới</Button>
         </div>
         <div className="flex gap-2">
-          <Button type="submit">Save</Button>
+          <Button type="submit">Lưu Bộ Lọc</Button>
           <Button color="gray" onClick={onClose}>
-            Cancel
+            Huỷ
           </Button>
         </div>
       </div>

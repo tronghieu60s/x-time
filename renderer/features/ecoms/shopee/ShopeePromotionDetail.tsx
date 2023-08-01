@@ -55,10 +55,6 @@ export default function ShopeePromotionDetail(props: Props) {
     setPromotionStartTime(promotion.startTime);
   }, [promotion]);
 
-  const onPageChange = useCallback((page: number) => {
-    setPagination((prev) => ({ ...prev, page }));
-  }, []);
-
   const onFilterChange = useCallback((index: number) => {
     setPagination((prev) => ({ ...prev, page: 1 }));
     setFilterSelected(index);
@@ -92,6 +88,7 @@ export default function ShopeePromotionDetail(props: Props) {
 
   const productsData = useMemo(() => {
     let filteredProducts = products;
+
     if (search.length > 0) {
       filteredProducts = filterByConditions(products, search);
     } else if (filterSelected > -1) {
@@ -99,8 +96,10 @@ export default function ShopeePromotionDetail(props: Props) {
       filteredProducts = filterByConditions(products, values);
     }
     const paginateProducts = filteredProducts.slice((page - 1) * limit, page * limit);
+
     setPagination((prev) => ({ ...prev, total: filteredProducts.length }));
     onSetNumOfProducts(filteredProducts.length);
+
     return paginateProducts;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products, search, filterSelected, page, limit, filters]);
@@ -126,7 +125,7 @@ export default function ShopeePromotionDetail(props: Props) {
           </div>
           <div className="w-1/2">
             <div className="mb-2 block">
-              <Label htmlFor="search" value="Search Products" />
+              <Label htmlFor="search" value="Tìm Kiếm Sản Phẩm" />
             </div>
             <TextInput
               id="search"
@@ -149,7 +148,9 @@ export default function ShopeePromotionDetail(props: Props) {
         showHighestPrice={false}
         showStatus={false}
         onView={onViewProduct}
-        onPageChange={onPageChange}
+        onPageChange={(page: number) => {
+          setPagination((prev) => ({ ...prev, page }));
+        }}
       />
     </div>
   );
