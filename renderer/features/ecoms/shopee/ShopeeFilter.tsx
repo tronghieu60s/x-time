@@ -221,35 +221,32 @@ export default function ShopeeFilter(props: Props) {
                   {!filter.values?.length && (
                     <Table.Row>
                       <Table.Cell colSpan={10}>
-                        <div className="flex justify-center">No Data</div>
+                        <div className="flex justify-center">Không Có Dữ Liệu</div>
                       </Table.Cell>
                     </Table.Row>
                   )}
                 </Table.Body>
               </Table>
-              <div className="flex justify-between gap-2">
-                <div></div>
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={() => onAddFilter(index)} disabled={filter.isReadOnly}>
-                    Thêm Bộ Lọc
-                  </Button>
-                  <Button
-                    size="sm"
-                    color="failure"
-                    onClick={() => onDeleteFilter(index)}
-                    disabled={filter.isReadOnly}
-                  >
-                    Xoá Bộ Lọc
-                  </Button>
+              {!filter.isReadOnly && (
+                <div className="flex justify-between gap-2">
+                  <div></div>
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={() => onAddFilter(index)}>
+                      Thêm Bộ Lọc
+                    </Button>
+                    <Button size="sm" color="failure" onClick={() => onDeleteFilter(index)}>
+                      Xoá Bộ Lọc
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </Tabs.Item>
         ))}
       </Tabs.Group>
       <div className="w-full flex justify-between pt-4">
         <div className="flex gap-2">
-          <Button onClick={onNewFilter}>Tạo Bộ Lọc Mới</Button>
+          <Button onClick={onNewFilter}>Tạo Bộ Lọc</Button>
         </div>
         <div className="flex gap-2">
           <Button type="submit">Lưu Bộ Lọc</Button>
@@ -261,4 +258,3 @@ export default function ShopeeFilter(props: Props) {
     </form>
   );
 }
-

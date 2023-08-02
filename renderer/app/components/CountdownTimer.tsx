@@ -20,7 +20,7 @@ export default function CountdownTimer(props: Props) {
 
   function updateRemainingTime(countdown) {
     const timer = countdownTimer(countdown * 1000);
-    if (!Number(timer.seconds)) {
+    if (isNaN(Number(timer.seconds))) {
       onEnd && onEnd();
       return setRemaining('00:00:00');
     }

@@ -22,14 +22,23 @@ export default function ShopeePromotionDetail(props: Props) {
 
   const [search, setSearch] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
   const [filterSelected, setFilterSelected] = useState(0);
 
   const [products, setProducts] = useState<ProductType[]>([]);
+  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
+  const [numOfProducts, setNumOfProducts] = useState(0);
+
   const [promotionEndTime, setPromotionEndTime] = useState(0);
   const [promotionStartTime, setPromotionStartTime] = useState(0);
 
   const { page, limit } = pagination;
+
+  useEffect(() => {
+    if (numOfProducts) {
+      onSetNumOfProducts(numOfProducts);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numOfProducts]);
 
   useEffect(() => {
     if (filterGlobalSelected > -1) {
@@ -90,18 +99,17 @@ export default function ShopeePromotionDetail(props: Props) {
     let filteredProducts = products;
 
     if (search.length > 0) {
-      filteredProducts = filterByConditions(products, search);
+      filteredProducts = filterByConditions(filteredProducts, search);
     } else if (filterSelected > -1) {
       const { values = [] } = filters[filterSelected] || {};
-      filteredProducts = filterByConditions(products, values);
+      filteredProducts = filterByConditions(filteredProducts, values);
     }
     const paginateProducts = filteredProducts.slice((page - 1) * limit, page * limit);
 
     setPagination((prev) => ({ ...prev, total: filteredProducts.length }));
-    onSetNumOfProducts(filteredProducts.length);
+    setNumOfProducts(filteredProducts.length);
 
     return paginateProducts;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products, search, filterSelected, page, limit, filters]);
 
   return (
@@ -155,4 +163,3 @@ export default function ShopeePromotionDetail(props: Props) {
     </div>
   );
 }
-

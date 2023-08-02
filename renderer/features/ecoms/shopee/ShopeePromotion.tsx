@@ -1,7 +1,7 @@
 import CountdownTimer from '@/app/components/CountdownTimer';
 import { getStorageByKey, setStorageByKey } from '@/core/storage';
 import { PromotionType } from '@/features/products/common/types';
-import { Button, CustomFlowbiteTheme, Modal, Select, Tabs } from 'flowbite-react';
+import { Button, CustomFlowbiteTheme, Modal, Select, Spinner, Tabs } from 'flowbite-react';
 import { MouseEvent, useCallback, useEffect, useState } from 'react';
 import ShopeeFilter from './ShopeeFilter';
 import ShopeePromotionDetail from './ShopeePromotionDetail';
@@ -29,11 +29,12 @@ const filterAll = {
 const apiPromotions = '/api/ecoms/shopee/promotions';
 
 export default function ShopeePromotion() {
+  const [loading, setLoading] = useState(false);
+  const [tabSelected, setTabSelected] = useState([0]);
+
   const [filters, setFilters] = useState<ShopeeFilterType[]>([]);
   const [filterSelected, setFilterSelected] = useState(-1);
   const [isShowFilter, setIsShowFilter] = useState(false);
-
-  const [tabSelected, setTabSelected] = useState([0]);
 
   const [promotions, setPromotions] = useState<PromotionType[]>([]);
   const [promotionEndTime, setPromotionEndTime] = useState(0);
@@ -46,6 +47,7 @@ export default function ShopeePromotion() {
   }, []);
 
   const getPromotions = useCallback(() => {
+    setLoading(true);
     fetch(apiPromotions)
       .then((res) => res.json())
       .then((res) => {
@@ -53,10 +55,16 @@ export default function ShopeePromotion() {
         const { endTime, sessions } = res.data;
         setPromotions(sessions);
         setPromotionEndTime(endTime);
-      });
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => getPromotions(), [getPromotions]);
+
+  const onEndTime = useCallback(() => {
+    getPromotions();
+    setTabSelected([0]);
+  }, [getPromotions]);
 
   const onSwitchTabs = useCallback((event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     const target = event.target as HTMLDivElement;
@@ -73,14 +81,11 @@ export default function ShopeePromotion() {
     });
   }, []);
 
-  const onSaveFilter = useCallback(
-    (values) => {
-      const filters = values.filters.map((filter, index) => ({ ...filter, id: index }));
-      setFilters(filters);
-      setStorageByKey('filters', filters);
-    },
-    [],
-  );
+  const onSaveFilter = useCallback((values) => {
+    const filters = values.filters.map((filter, index) => ({ ...filter, id: index }));
+    setFilters(filters);
+    setStorageByKey('filters', filters);
+  }, []);
 
   const onSetNumOfProducts = useCallback((index: number, number: number) => {
     setNumOfProducts((prev) => {
@@ -111,10 +116,16 @@ export default function ShopeePromotion() {
         </div>
         <div>
           <Button gradientDuoTone="greenToBlue">
-            Sale: <CountdownTimer timer={promotionEndTime} onEnd={getPromotions} />
+            Sale: <CountdownTimer timer={promotionEndTime} onEnd={onEndTime} />
           </Button>
         </div>
       </div>
+      {loading && (
+        <div className="flex justify-center items-center">
+          {loading && <Spinner size="sm" aria-label="Default status example" />}
+          <div className="mt-1 ml-2">{loading ? 'Đang Tải Dữ Liệu' : 'Không Có Dữ Liệu'}</div>
+        </div>
+      )}
       <Tabs.Group
         theme={customTabTheme}
         style="fullWidth"
@@ -151,4 +162,3 @@ export default function ShopeePromotion() {
     </div>
   );
 }
-

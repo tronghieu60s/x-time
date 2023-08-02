@@ -58,7 +58,7 @@ export default function ProductList(props: Props) {
     <div className="flex flex-col gap-4">
       <Table striped theme={customTableTheme}>
         <Table.Head>
-          <Table.HeadCell className='w-20' hidden={!showImage}></Table.HeadCell>
+          <Table.HeadCell className="w-20" hidden={!showImage}></Table.HeadCell>
           <Table.HeadCell className="w-10">STT</Table.HeadCell>
           <Table.HeadCell>Name</Table.HeadCell>
           <Table.HeadCell className="w-10">Stock</Table.HeadCell>
@@ -89,7 +89,7 @@ export default function ProductList(props: Props) {
                 <Avatar
                   img={`https://down-vn.img.susercontent.com/file/${product.image || ''}`}
                   onClick={() => setPreviewImage(product.image || '')}
-                  className='w-10'
+                  className="w-10"
                 />
               </Table.Cell>
               <Table.Cell>
@@ -142,7 +142,9 @@ export default function ProductList(props: Props) {
               <Table.Cell colSpan={10}>
                 <div className="flex justify-center items-center">
                   {loading && <Spinner size="sm" aria-label="Default status example" />}
-                  <div className="mt-1 ml-2">No Data</div>
+                  <div className="mt-1 ml-2">
+                    {loading ? 'Đang Tải Dữ Liệu' : 'Không Có Dữ Liệu'}
+                  </div>
                 </div>
               </Table.Cell>
             </Table.Row>
