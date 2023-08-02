@@ -62,22 +62,22 @@ export default function ProductList(props: Props) {
           <Table.HeadCell className="w-10">STT</Table.HeadCell>
           <Table.HeadCell>Name</Table.HeadCell>
           <Table.HeadCell className="w-10">Stock</Table.HeadCell>
-          <Table.HeadCell className="w-15" hidden={!showPrice}>
+          <Table.HeadCell className="w-32" hidden={!showPrice}>
             Price
           </Table.HeadCell>
-          <Table.HeadCell className="w-15" hidden={!showPriceHidden}>
+          <Table.HeadCell className="w-32" hidden={!showPriceHidden}>
             Price Hidden
           </Table.HeadCell>
-          <Table.HeadCell className="w-15" hidden={!showLowestPrice}>
+          <Table.HeadCell className="w-32" hidden={!showLowestPrice}>
             Lowest Price
           </Table.HeadCell>
-          <Table.HeadCell className="w-15" hidden={!showHighestPrice}>
+          <Table.HeadCell className="w-32" hidden={!showHighestPrice}>
             Highest Price
           </Table.HeadCell>
-          <Table.HeadCell className="w-15" hidden={!showStatus}>
+          <Table.HeadCell className="w-40" hidden={!showStatus}>
             Status
           </Table.HeadCell>
-          <Table.HeadCell className="w-15">Action</Table.HeadCell>
+          <Table.HeadCell className="w-20">Action</Table.HeadCell>
         </Table.Head>
         <Table.Body className="divide-y">
           {products?.map((product, index) => (

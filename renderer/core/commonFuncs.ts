@@ -33,8 +33,9 @@ export const filterByConditions = (arr: any[], conditions?: any[]) => {
   if (!conditions || conditions.length === 0) return arr;
 
   let newArr = [...arr];
+  let newConditions = [...conditions];
   do {
-    const { field, condition, value } = conditions.shift();
+    const { field, condition, value } = newConditions.shift();
     newArr = newArr.filter((item) => {
       let fieldValue = item[field];
       let compareValue = value;
@@ -54,7 +55,7 @@ export const filterByConditions = (arr: any[], conditions?: any[]) => {
           return true;
       return false;
     });
-  } while (conditions.length > 0);
+  } while (newConditions.length > 0);
 
   return newArr;
 };
