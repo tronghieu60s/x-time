@@ -1,11 +1,12 @@
 import { filterByConditions } from '@/core/commonFuncs';
+import { getStorageByKey, setStorageByKey } from '@/core/storage';
 import ProductList from '@/features/products/ProductList';
 import { ProductType } from '@/features/products/common/types';
 import { Button, Label, Modal, Select, TextInput } from 'flowbite-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Zap, ZapOff } from 'react-feather';
 import { useDebouncedCallback } from 'use-debounce';
 import { ShopeeFilterType } from '../shopee/common/types';
-import { getStorageByKey, setStorageByKey } from '@/core/storage';
 import CookyFilter from './CookyFilter';
 
 const filterAll = {
@@ -20,6 +21,7 @@ const apiProfileProducts = '/api/ecoms/cooky/profile/products';
 export default function CookyFood() {
   const [search, setSearch] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [forceRandom, setForceRandom] = useState(0);
 
   const [filters, setFilters] = useState<ShopeeFilterType[]>([]);
   const [filterSelected, setFilterSelected] = useState(0);
@@ -57,6 +59,7 @@ export default function CookyFood() {
 
   const onFilterChange = useCallback((index: number) => {
     setPagination((prev) => ({ ...prev, page: 1 }));
+    setForceRandom(0);
     setFilterSelected(index);
   }, []);
 
@@ -92,12 +95,16 @@ export default function CookyFood() {
       const { values = [] } = filters[filterSelected] || {};
       filteredProducts = filterByConditions(filteredProducts, values);
     }
+
+    if (forceRandom > 0) {
+      filteredProducts = filteredProducts.sort(() => Math.random() - 0.5);
+    }
     const paginateProducts = filteredProducts.slice((page - 1) * limit, page * limit);
 
     setPagination((prev) => ({ ...prev, total: filteredProducts.length }));
 
     return paginateProducts;
-  }, [products, search, filterSelected, page, limit, filters]);
+  }, [products, forceRandom, search, filterSelected, page, limit, filters]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -106,7 +113,7 @@ export default function CookyFood() {
           <Button gradientDuoTone="greenToBlue" onClick={() => setIsShowFilter(true)}>
             Lọc Món Ăn
           </Button>
-          <Button gradientDuoTone="greenToBlue" onClick={() => setIsShowFilter(true)}>
+          <Button gradientDuoTone="greenToBlue" onClick={() => setForceRandom(Math.random())}>
             Món Ăn Ngẫu Nhiên
           </Button>
         </div>
