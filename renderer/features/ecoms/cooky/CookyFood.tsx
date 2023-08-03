@@ -84,6 +84,7 @@ export default function CookyFood() {
       search.push({ field: 'price', condition: 'equal', value: Number(price) });
 
     setSearch(search);
+    setPagination((prev) => ({ ...prev, page: 1 }));
   }, 300);
 
   const productsData = useMemo(() => {
@@ -108,18 +109,24 @@ export default function CookyFood() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap justify-between items-end">
-        <div className="w-full md:w-1/2 flex gap-2">
-          <Button gradientDuoTone="greenToBlue" onClick={() => setIsShowFilter(true)}>
-            Lọc Món Ăn
-          </Button>
-          <Button gradientDuoTone="greenToBlue" onClick={() => setForceRandom(Math.random())}>
-            Món Ăn Ngẫu Nhiên
-          </Button>
+      <div className="flex flex-wrap justify-between items-end gap-y-4">
+        <div className="w-full md:w-1/2">
+          <div className="flex flex-col items-start gap-2">
+            <Button gradientDuoTone="greenToBlue" onClick={() => setIsShowFilter(true)}>
+              Lọc Sản Phẩm
+            </Button>
+            <Button gradientDuoTone="pinkToOrange" onClick={() => setForceRandom(Math.random())}>
+              Món Ăn Ngẫu Nhiên
+            </Button>
+          </div>
         </div>
         <div className="w-full md:w-1/2 flex justify-end items-end gap-2">
           <div className="w-1/2 flex justify-end">
-            <Select value={filterSelected} onChange={(e) => onFilterChange(Number(e.target.value))}>
+            <Select
+              value={filterSelected}
+              onChange={(e) => onFilterChange(Number(e.target.value))}
+              className="w-full md:w-auto"
+            >
               {filters.map((filter, index) => (
                 <option key={index} value={index}>
                   {filter.name}
@@ -127,10 +134,8 @@ export default function CookyFood() {
               ))}
             </Select>
           </div>
-          <div className="w-1/2">
-            <div className="mb-2 block">
-              <Label htmlFor="search" value="Tìm Kiếm Món Ăn" />
-            </div>
+          <div className="w-1/2 flex flex-col gap-2">
+            <Label htmlFor="search" value="Tìm Kiếm Món Ăn" />
             <TextInput
               id="search"
               sizing="md"
@@ -141,26 +146,28 @@ export default function CookyFood() {
           </div>
         </div>
       </div>
-      <ProductList
-        loading={loading}
-        products={productsData}
-        pagination={pagination}
-        showImage
-        onView={onViewProduct}
-        onPageChange={(page: number) => {
-          setPagination((prev) => ({ ...prev, page }));
-        }}
-      />
-      <Modal size="4xl" show={isShowFilter} dismissible onClose={() => setIsShowFilter(false)}>
-        <Modal.Header>Lọc Món Ăn</Modal.Header>
-        <Modal.Body>
-          <CookyFilter
-            filters={filters}
-            onSave={onSaveFilter}
-            onClose={() => setIsShowFilter(false)}
-          />
-        </Modal.Body>
-      </Modal>
+      <div>
+        <ProductList
+          loading={loading}
+          products={productsData}
+          pagination={pagination}
+          showImage
+          onView={onViewProduct}
+          onPageChange={(page: number) => {
+            setPagination((prev) => ({ ...prev, page }));
+          }}
+        />
+        <Modal size="4xl" show={isShowFilter} dismissible onClose={() => setIsShowFilter(false)}>
+          <Modal.Header>Lọc Món Ăn</Modal.Header>
+          <Modal.Body>
+            <CookyFilter
+              filters={filters}
+              onSave={onSaveFilter}
+              onClose={() => setIsShowFilter(false)}
+            />
+          </Modal.Body>
+        </Modal>
+      </div>
     </div>
   );
 }

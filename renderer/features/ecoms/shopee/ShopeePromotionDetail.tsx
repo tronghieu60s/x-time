@@ -37,7 +37,7 @@ export default function ShopeePromotionDetail(props: Props) {
     if (numOfProducts) {
       onSetNumOfProducts(numOfProducts);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numOfProducts]);
 
   useEffect(() => {
@@ -93,6 +93,7 @@ export default function ShopeePromotionDetail(props: Props) {
     if (priceHidden) search.push({ field: 'priceHidden', condition: 'equal', value: priceHidden });
 
     setSearch(search);
+    setPagination((prev) => ({ ...prev, page: 1 }));
   }, 300);
 
   const productsData = useMemo(() => {
@@ -113,17 +114,21 @@ export default function ShopeePromotionDetail(props: Props) {
   }, [products, search, filterSelected, page, limit, filters]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap justify-between items-end">
-        <div className="w-full md:w-1/2 flex">
-          <Button outline gradientDuoTone="greenToBlue">
+    <div className="flex flex-col justify-center gap-4">
+      <div className="flex flex-wrap justify-between items-end gap-y-4">
+        <div className="w-full md:w-1/2">
+          <Button outline gradientDuoTone="greenToBlue" className="w-full md:w-auto">
             {currentPromotion ? 'Flash Sale' : 'Upcoming'}:{' '}
             <CountdownTimer timer={currentPromotion ? promotionEndTime : promotionStartTime} />
           </Button>
         </div>
         <div className="w-full md:w-1/2 flex justify-end items-end gap-2">
           <div className="w-1/2 flex justify-end">
-            <Select value={filterSelected} onChange={(e) => onFilterChange(Number(e.target.value))}>
+            <Select
+              value={filterSelected}
+              onChange={(e) => onFilterChange(Number(e.target.value))}
+              className="w-full md:w-auto"
+            >
               {filters.map((filter, index) => (
                 <option key={index} value={index}>
                   {filter.name}
@@ -131,10 +136,8 @@ export default function ShopeePromotionDetail(props: Props) {
               ))}
             </Select>
           </div>
-          <div className="w-1/2">
-            <div className="mb-2 block">
-              <Label htmlFor="search" value="Tìm Kiếm Sản Phẩm" />
-            </div>
+          <div className="w-1/2 flex flex-col gap-2">
+            <Label htmlFor="search" value="Tìm Kiếm Sản Phẩm" />
             <TextInput
               id="search"
               sizing="md"
@@ -145,19 +148,21 @@ export default function ShopeePromotionDetail(props: Props) {
           </div>
         </div>
       </div>
-      <ProductList
-        loading={loading}
-        products={productsData}
-        pagination={pagination}
-        showStock
-        showPrice={currentPromotion}
-        showImage
-        showPriceHidden={!currentPromotion}
-        onView={onViewProduct}
-        onPageChange={(page: number) => {
-          setPagination((prev) => ({ ...prev, page }));
-        }}
-      />
+      <div>
+        <ProductList
+          loading={loading}
+          products={productsData}
+          pagination={pagination}
+          showStock
+          showPrice={currentPromotion}
+          showImage
+          showPriceHidden={!currentPromotion}
+          onView={onViewProduct}
+          onPageChange={(page: number) => {
+            setPagination((prev) => ({ ...prev, page }));
+          }}
+        />
+      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { getProductInfoFromResponse, getProfileInfoFromResponse } from '.';
+import * as cheerio from 'cheerio';
 
 const {
   COOKIE_PROFILE_URL = 'https://app-api.cooky.vn/api/user/get_public_profile',
@@ -65,4 +66,16 @@ export const getProductsProfile = async (id: number) => {
   }));
 
   return products;
+};
+
+export const getProductsMarketDetail = async (id: number) => {
+  const product = await fetch(`https://cooky.vn/market/A-${id}`).then((res) => res.text());
+  const $cheerio = cheerio.load(product);
+  const productText = $cheerio($cheerio('script')[5]).text();
+  const productJsonText = productText.substring(
+    productText.indexOf('{'),
+    productText.lastIndexOf('}') + 1,
+  );
+  const productJson = JSON.parse(productJsonText) || {};
+  return getProductInfoFromResponse(productJson);
 };

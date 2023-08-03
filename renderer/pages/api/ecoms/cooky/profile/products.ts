@@ -1,7 +1,7 @@
 import { getProductsProfile } from '@/features/ecoms/cooky/common/api';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const cacheProducts = {};
+let cacheProducts = {};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
@@ -13,6 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         products = cacheProducts[id];
       } else {
         products = await getProductsProfile(id);
+        cacheProducts[id] = products;
       }
       
       res.status(200).json({ success: true, data: products });
