@@ -1,14 +1,12 @@
-import { ProductType } from '@/features/products/common/types';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { getProductInfoFromResponse, getPromotionInfoFromResponse } from '.';
 
 const {
   SHOPEE_PROMOTIONS_URL = 'https://shopee.vn/api/v4/flash_sale/get_all_sessions',
-  SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL = 'https://shopee.vn/api/v4/flash_sale/get_all_itemids',
-  SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL = 'https://shopee.vn/api/v4/flash_sale/flash_sale_batch_get_items',
+  SHOPEE_PROMOTIONS_PRODUCTS_URL = 'https://shopee.vn/api/v4/flash_sale/flash_sale_batch_get_items',
+  SHOPEE_PROMOTIONS_PRODUCTS_ID_URL = 'https://shopee.vn/api/v4/flash_sale/get_all_itemids',
 } = process.env;
-
 
 export const getPromotions = async () => {
   const promotions = await fetch(SHOPEE_PROMOTIONS_URL).then(
@@ -18,7 +16,7 @@ export const getPromotions = async () => {
 };
 
 export const getProductsPromotion = async (promotionid: number) => {
-  const apiPromotion = `${SHOPEE_PROMOTIONS_ALL_ITEMS_API_URL}?promotionid=${promotionid}&sort_soldout=true`;
+  const apiPromotion = `${SHOPEE_PROMOTIONS_PRODUCTS_ID_URL}?promotionid=${promotionid}&sort_soldout=true`;
   const promotion = await fetch(apiPromotion).then(async (res) => (await res.json()).data);
 
   const productIds = promotion.item_brief_list.map((item) => item.itemid);
@@ -38,7 +36,7 @@ export const getProductsPromotion = async (promotionid: number) => {
         body: JSON.stringify(body),
         headers: { 'Content-Type': 'application/json' },
       };
-      const products = await fetch(SHOPEE_PROMOTIONS_GET_PRODUCTS_API_URL, init).then(
+      const products = await fetch(SHOPEE_PROMOTIONS_PRODUCTS_URL, init).then(
         async (res) => (await res.json()).data,
       );
 

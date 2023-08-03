@@ -13,7 +13,7 @@ export const getProductInfoFromPath = (path: string) => {
 export const getProductInfoFromResponse = (response: ResponseShopeeProduct) => {
   const itemid = response.itemid;
   const shopid = response?.shopid;
-  const image = response?.image;
+  const image = `https://down-vn.img.susercontent.com/file/${response?.image}`;
   const name = response.name;
   const price = response.price / 100000;
   const priceHidden = response?.hidden_price_display || '';
@@ -55,5 +55,6 @@ export const getPromotionInfoFromResponse = (response: ResponseShopeePromotion) 
     startTime: session.start_time,
     jsonData: JSON.stringify(session, null, 2),
   }));
+
   return { endTime, sessions };
 };

@@ -9,11 +9,6 @@ export type ShopeeFilterType = {
   isReadOnly?: boolean;
 };
 
-export type ShopeeSettingType = {
-  chromePath?: string;
-  chromeHeadless?: boolean;
-};
-
 export type ResponseShopeeProduct = {
   itemid: number;
   shopid?: number;

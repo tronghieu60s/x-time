@@ -41,7 +41,7 @@ export default function ShopeePromotion() {
   const [numOfProducts, setNumOfProducts] = useState<number[]>([]);
 
   useEffect(() => {
-    const filters = getStorageByKey('filters') || [];
+    const filters = getStorageByKey('filters/shopee-promotions') || [];
     const isHasFilterAll = filters?.some((filter: any) => filter.id === 0);
     setFilters(isHasFilterAll ? filters : [filterAll, ...filters]);
   }, []);
@@ -84,7 +84,7 @@ export default function ShopeePromotion() {
   const onSaveFilter = useCallback((values) => {
     const filters = values.filters.map((filter, index) => ({ ...filter, id: index }));
     setFilters(filters);
-    setStorageByKey('filters', filters);
+    setStorageByKey('filters/shopee-promotions', filters);
   }, []);
 
   const onSetNumOfProducts = useCallback((index: number, number: number) => {

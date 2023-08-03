@@ -31,12 +31,21 @@ export const setStorage = (resource = {}) => {
 };
 
 export const getStorageByKey = (key: string) => {
+  const keys = key.split('/');
   const result = getStorage();
-  return result?.[key];
+  return result && keys.reduce((acc, cur) => acc[cur], result);
 };
 
 export const setStorageByKey = (key: string, value: any) => {
+  const keys = key.split('/');
   const result = getStorage() || {};
-  result[key] = value;
+  keys.reduce((acc, cur, index) => {
+    if (index === keys.length - 1) {
+      acc[cur] = value;
+    } else {
+      acc[cur] = acc[cur] || {};
+    }
+    return acc[cur];
+  }, result);
   setStorage(result);
 };

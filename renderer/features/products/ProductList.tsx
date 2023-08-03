@@ -26,8 +26,9 @@ type Props = {
   loading?: boolean;
   products: ProductType[];
   pagination?: PaginationType;
-  showImage?: boolean;
+  showStock?: boolean;
   showPrice?: boolean;
+  showImage?: boolean;
   showPriceHidden?: boolean;
   showLowestPrice?: boolean;
   showHighestPrice?: boolean;
@@ -42,12 +43,13 @@ export default function ProductList(props: Props) {
     loading,
     products,
     pagination,
-    showImage = false,
+    showStock = false,
     showPrice = true,
+    showImage = false,
     showPriceHidden = false,
-    showLowestPrice = true,
-    showHighestPrice = true,
-    showStatus = true,
+    showLowestPrice = false,
+    showHighestPrice = false,
+    showStatus = false,
     onView,
     onDelete,
     onPageChange,
@@ -61,7 +63,9 @@ export default function ProductList(props: Props) {
           <Table.HeadCell className="w-20" hidden={!showImage}></Table.HeadCell>
           <Table.HeadCell className="w-10">STT</Table.HeadCell>
           <Table.HeadCell>Name</Table.HeadCell>
-          <Table.HeadCell className="w-10">Stock</Table.HeadCell>
+          <Table.HeadCell className="w-10" hidden={!showStock}>
+            Stock
+          </Table.HeadCell>
           <Table.HeadCell className="w-32" hidden={!showPrice}>
             Price
           </Table.HeadCell>
@@ -87,7 +91,7 @@ export default function ProductList(props: Props) {
             >
               <Table.Cell hidden={!showImage}>
                 <Avatar
-                  img={`https://down-vn.img.susercontent.com/file/${product.image || ''}`}
+                  img={product.image}
                   onClick={() => setPreviewImage(product.image || '')}
                   className="w-10"
                 />
@@ -98,7 +102,7 @@ export default function ProductList(props: Props) {
               <Table.Cell className="whitespace-normal font-medium text-gray-900 dark:text-white">
                 {product.name || '--- Unknown ---'}
               </Table.Cell>
-              <Table.Cell>{product.stock || 0}</Table.Cell>
+              <Table.Cell hidden={!showStock}>{product.stock || 0}</Table.Cell>
               <Table.Cell hidden={!showPrice}>{formatCurrency(product.price || 0)}</Table.Cell>
               <Table.Cell hidden={!showPriceHidden}>{product?.priceHidden || 0} ₫</Table.Cell>
               <Table.Cell hidden={!showLowestPrice}>
@@ -170,10 +174,7 @@ export default function ProductList(props: Props) {
         <Modal.Body>
           <div className="flex justify-center items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`https://down-vn.img.susercontent.com/file/${previewImage}`}
-              alt={previewImage}
-            />
+            <img src={previewImage} alt="Preview Image" />
           </div>
         </Modal.Body>
       </Modal>

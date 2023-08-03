@@ -1,6 +1,8 @@
 import { Tabs } from 'flowbite-react';
 import { useEffect } from 'react';
 import ShopeeHome from './ecoms/shopee/ShopeeHome';
+import HasakiHome from './ecoms/hasaki/HasakiHome';
+import CookyHome from './ecoms/cooky/CookyHome';
 
 export default function HomeFeature() {
   useEffect(() => {
@@ -15,11 +17,16 @@ export default function HomeFeature() {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4">
           <Tabs.Group aria-label="Default tabs" style="fullWidth">
-            <Tabs.Item active title="Shopee">
+            <Tabs.Item title="Shopee">
               <ShopeeHome />
             </Tabs.Item>
-            <Tabs.Item active title="Lazada"></Tabs.Item>
-            <Tabs.Item active title="Hasaki" disabled></Tabs.Item>
+            <Tabs.Item title="Lazada" disabled></Tabs.Item>
+            <Tabs.Item title="Cooky">
+              <CookyHome />
+            </Tabs.Item>
+            <Tabs.Item title="Hasaki">
+              <HasakiHome />
+            </Tabs.Item>
           </Tabs.Group>
         </div>
       </div>

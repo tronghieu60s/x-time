@@ -1,7 +1,7 @@
-import { ShopeeFilterType } from './types';
+import { CookyFilterType } from './types';
 
 export type FormFilter = {
-  filters: ShopeeFilterType[];
+  filters: CookyFilterType[];
 };
 
 export const initialValuesFilter: FormFilter = {

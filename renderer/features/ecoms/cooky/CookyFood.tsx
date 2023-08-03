@@ -1,55 +1,45 @@
-import ProductList from '@/features/products/ProductList';
-import { ProductType, PromotionType } from '@/features/products/common/types';
-import { Button, Label, Select, TextInput } from 'flowbite-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ShopeeFilterType } from './common/types';
-import CountdownTimer from '@/app/components/CountdownTimer';
 import { filterByConditions } from '@/core/commonFuncs';
+import ProductList from '@/features/products/ProductList';
+import { ProductType } from '@/features/products/common/types';
+import { Button, Label, Modal, Select, TextInput } from 'flowbite-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import { ShopeeFilterType } from '../shopee/common/types';
+import { getStorageByKey, setStorageByKey } from '@/core/storage';
+import CookyFilter from './CookyFilter';
 
-type Props = {
-  filters: ShopeeFilterType[];
-  filterGlobalSelected: number;
-  promotion: PromotionType;
-  currentPromotion: boolean;
-  onSetNumOfProducts: (numOfProducts: number) => void;
+const filterAll = {
+  id: 0,
+  name: 'Tất Cả Sản Phẩm',
+  values: [],
+  isReadOnly: true,
 };
 
-const apiPromotionProducts = '/api/ecoms/shopee/promotions/products';
+const apiProfileProducts = '/api/ecoms/cooky/profile/products';
 
-export default function ShopeePromotionDetail(props: Props) {
-  const { filters, filterGlobalSelected, promotion, currentPromotion, onSetNumOfProducts } = props;
-
+export default function CookyFood() {
   const [search, setSearch] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [filters, setFilters] = useState<ShopeeFilterType[]>([]);
   const [filterSelected, setFilterSelected] = useState(0);
+  const [isShowFilter, setIsShowFilter] = useState(false);
 
   const [products, setProducts] = useState<ProductType[]>([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
-  const [numOfProducts, setNumOfProducts] = useState(0);
-
-  const [promotionEndTime, setPromotionEndTime] = useState(0);
-  const [promotionStartTime, setPromotionStartTime] = useState(0);
 
   const { page, limit } = pagination;
 
   useEffect(() => {
-    if (numOfProducts) {
-      onSetNumOfProducts(numOfProducts);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [numOfProducts]);
-
-  useEffect(() => {
-    if (filterGlobalSelected > -1) {
-      setFilterSelected(filterGlobalSelected);
-    }
-  }, [filterGlobalSelected]);
+    const filters = getStorageByKey('filters/cooky-foods') || [];
+    const isHasFilterAll = filters?.some((filter: any) => filter.id === 0);
+    setFilters(isHasFilterAll ? filters : [filterAll, ...filters]);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
 
-    fetch(`${apiPromotionProducts}?id=${promotion.promotionid}`)
+    fetch(`${apiProfileProducts}?id=51`)
       .then((res) => res.json())
       .then((res) => {
         if (!res.data) return;
@@ -57,12 +47,13 @@ export default function ShopeePromotionDetail(props: Props) {
         setPagination((prev) => ({ ...prev, total: res.data.length }));
       })
       .finally(() => setLoading(false));
-  }, [promotion.promotionid]);
+  }, []);
 
-  useEffect(() => {
-    setPromotionEndTime(promotion.endTime);
-    setPromotionStartTime(promotion.startTime);
-  }, [promotion]);
+  const onSaveFilter = useCallback((values) => {
+    const filters = values.filters.map((filter, index) => ({ ...filter, id: index }));
+    setFilters(filters);
+    setStorageByKey('filters/cooky-foods', filters);
+  }, []);
 
   const onFilterChange = useCallback((index: number) => {
     setPagination((prev) => ({ ...prev, page: 1 }));
@@ -74,8 +65,8 @@ export default function ShopeePromotionDetail(props: Props) {
       const findProduct = products.find((product) => product.key === key);
       if (!findProduct) return;
 
-      const { itemid, shopid } = findProduct;
-      window.open(`https://shopee.vn/A-i.${shopid}.${itemid}`, '_blank');
+      const { itemid } = findProduct;
+      window.open(`https://www.cooky.vn/market/A-${itemid}`, '_blank');
     },
     [products],
   );
@@ -83,14 +74,11 @@ export default function ShopeePromotionDetail(props: Props) {
   const onChangeSearch = useDebouncedCallback((value) => {
     const search: any = [];
     const searchString = value.split(';');
-    const [name, stock, price, priceHidden] = searchString;
+    const [name, price] = searchString;
 
     if (name) search.push({ field: 'name', condition: 'includes', value: name });
-    if (stock && !isNaN(Number(stock)))
-      search.push({ field: 'stock', condition: 'equal', value: Number(stock) });
     if (price && !isNaN(Number(price)))
       search.push({ field: 'price', condition: 'equal', value: Number(price) });
-    if (priceHidden) search.push({ field: 'priceHidden', condition: 'equal', value: priceHidden });
 
     setSearch(search);
   }, 300);
@@ -107,7 +95,6 @@ export default function ShopeePromotionDetail(props: Props) {
     const paginateProducts = filteredProducts.slice((page - 1) * limit, page * limit);
 
     setPagination((prev) => ({ ...prev, total: filteredProducts.length }));
-    setNumOfProducts(filteredProducts.length);
 
     return paginateProducts;
   }, [products, search, filterSelected, page, limit, filters]);
@@ -115,10 +102,12 @@ export default function ShopeePromotionDetail(props: Props) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap justify-between items-end">
-        <div className="w-full md:w-1/2 flex">
-          <Button outline gradientDuoTone="greenToBlue">
-            {currentPromotion ? 'Flash Sale' : 'Upcoming'}:{' '}
-            <CountdownTimer timer={currentPromotion ? promotionEndTime : promotionStartTime} />
+        <div className="w-full md:w-1/2 flex gap-2">
+          <Button gradientDuoTone="greenToBlue" onClick={() => setIsShowFilter(true)}>
+            Lọc Món Ăn
+          </Button>
+          <Button gradientDuoTone="greenToBlue" onClick={() => setIsShowFilter(true)}>
+            Món Ăn Ngẫu Nhiên
           </Button>
         </div>
         <div className="w-full md:w-1/2 flex justify-end items-end gap-2">
@@ -133,13 +122,13 @@ export default function ShopeePromotionDetail(props: Props) {
           </div>
           <div className="w-1/2">
             <div className="mb-2 block">
-              <Label htmlFor="search" value="Tìm Kiếm Sản Phẩm" />
+              <Label htmlFor="search" value="Tìm Kiếm Món Ăn" />
             </div>
             <TextInput
               id="search"
               sizing="md"
               type="text"
-              placeholder="Name;Stock;Price;PriceHidden"
+              placeholder="Name;Price"
               onChange={(e) => onChangeSearch(e.target.value)}
             />
           </div>
@@ -149,15 +138,22 @@ export default function ShopeePromotionDetail(props: Props) {
         loading={loading}
         products={productsData}
         pagination={pagination}
-        showStock
-        showPrice={currentPromotion}
         showImage
-        showPriceHidden={!currentPromotion}
         onView={onViewProduct}
         onPageChange={(page: number) => {
           setPagination((prev) => ({ ...prev, page }));
         }}
       />
+      <Modal size="4xl" show={isShowFilter} dismissible onClose={() => setIsShowFilter(false)}>
+        <Modal.Header>Lọc Món Ăn</Modal.Header>
+        <Modal.Body>
+          <CookyFilter
+            filters={filters}
+            onSave={onSaveFilter}
+            onClose={() => setIsShowFilter(false)}
+          />
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
