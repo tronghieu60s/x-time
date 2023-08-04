@@ -42,7 +42,6 @@ export default function CookyFood() {
 
   useEffect(() => {
     setLoading(true);
-
     fetch(`${apiProfileProducts}?id=51`)
       .then((res) => res.json())
       .then((res) => {

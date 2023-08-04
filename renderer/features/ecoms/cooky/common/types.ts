@@ -35,9 +35,14 @@ export type ResponseCookyProduct = {
     }[];
   }[];
   recipe_steps: {
-    step: string;
     title: string;
     description: string;
   }[];
-
+  product_combos: {
+    id: number;
+    name: string;
+    price: {
+      unit_price: number;
+    };
+  }[];
 };

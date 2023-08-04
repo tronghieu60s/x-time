@@ -77,7 +77,7 @@ export default function CookyListProduct(props: Props) {
                 {pagination ? index + 1 + (pagination.page - 1) * pagination.limit : index + 1}
               </Table.Cell>
               <Table.Cell className="whitespace-normal font-medium text-gray-900 dark:text-white">
-                {product.name || '--- Unknown ---'}
+                {product.name}
               </Table.Cell>
               <Table.Cell hidden={!showStock}>{product.stock || 0}</Table.Cell>
               <Table.Cell hidden={!showPrice}>{formatCurrency(product.price || 0)}</Table.Cell>
