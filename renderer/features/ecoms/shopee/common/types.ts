@@ -1,12 +1,38 @@
-export type ShopeeFilterType = {
-  id: number;
+export type ShopeeProductType = {
+  key: string;
+  itemid: number;
+  shopid: number;
+  image?: string;
   name: string;
-  values?: {
-    field: string;
-    condition: string;
-    value: string;
-  }[];
-  isReadOnly?: boolean;
+  price: number;
+  priceHidden?: string;
+  stock: number;
+  models?: ProductModelType[];
+  variations?: ProductVariationType[];
+  ratingStars: number;
+  jsonData: string;
+};
+
+export type ProductModelType = {
+  modelid: number;
+  name: string;
+  price: number;
+  stock: number;
+  lowestPrice?: number;
+  highestPrice?: number;
+  isFollow?: boolean;
+};
+
+export type ProductVariationType = {
+  name: string;
+  options: string[];
+};
+
+export type PromotionType = {
+  promotionid: number;
+  name: string;
+  startTime: number;
+  endTime: number;
 };
 
 export type ResponseShopeeProduct = {

@@ -1,12 +1,11 @@
-export type CookyFilterType = {
-  id: number;
+export type CookyProductType = {
+  key: string;
+  itemid: number;
+  image?: string;
   name: string;
-  values?: {
-    field: string;
-    condition: string;
-    value: string;
-  }[];
-  isReadOnly?: boolean;
+  price: number;
+  stock: number;
+  jsonData: string;
 };
 
 export type ResponseCookyProfile = {
@@ -25,4 +24,20 @@ export type ResponseCookyProduct = {
   photos: {
     url: string;
   }[][];
+  short_description: string;
+  options: {
+    items: {
+      id: number;
+      name: string;
+      is_default: boolean;
+      unit_price: number;
+      quantity: number;
+    }[];
+  }[];
+  recipe_steps: {
+    step: string;
+    title: string;
+    description: string;
+  }[];
+
 };

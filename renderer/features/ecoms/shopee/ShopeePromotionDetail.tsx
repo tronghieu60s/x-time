@@ -1,14 +1,14 @@
-import ProductList from '@/features/products/ProductList';
-import { ProductType, PromotionType } from '@/features/products/common/types';
 import { Button, Label, Select, TextInput } from 'flowbite-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ShopeeFilterType } from './common/types';
 import CountdownTimer from '@/app/components/CountdownTimer';
 import { filterByConditions } from '@/core/commonFuncs';
 import { useDebouncedCallback } from 'use-debounce';
+import { FilterType } from '@/core/types';
+import { PromotionType, ShopeeProductType } from './common/types';
+import ShopeeListProduct from './ShopeeListProduct';
 
 type Props = {
-  filters: ShopeeFilterType[];
+  filters: FilterType[];
   filterGlobalSelected: number;
   promotion: PromotionType;
   currentPromotion: boolean;
@@ -24,7 +24,7 @@ export default function ShopeePromotionDetail(props: Props) {
   const [loading, setLoading] = useState(false);
   const [filterSelected, setFilterSelected] = useState(0);
 
-  const [products, setProducts] = useState<ProductType[]>([]);
+  const [products, setProducts] = useState<ShopeeProductType[]>([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
   const [numOfProducts, setNumOfProducts] = useState(0);
 
@@ -64,21 +64,10 @@ export default function ShopeePromotionDetail(props: Props) {
     setPromotionStartTime(promotion.startTime);
   }, [promotion]);
 
-  const onFilterChange = useCallback((index: number) => {
+  const onChangeFilter = useCallback((index: number) => {
     setPagination((prev) => ({ ...prev, page: 1 }));
     setFilterSelected(index);
   }, []);
-
-  const onViewProduct = useCallback(
-    (key: string) => {
-      const findProduct = products.find((product) => product.key === key);
-      if (!findProduct) return;
-
-      const { itemid, shopid } = findProduct;
-      window.open(`https://shopee.vn/A-i.${shopid}.${itemid}`, '_blank');
-    },
-    [products],
-  );
 
   const onChangeSearch = useDebouncedCallback((value) => {
     const search: any = [];
@@ -95,6 +84,17 @@ export default function ShopeePromotionDetail(props: Props) {
     setSearch(search);
     setPagination((prev) => ({ ...prev, page: 1 }));
   }, 300);
+
+  const onViewProduct = useCallback(
+    (key: string) => {
+      const findProduct = products.find((product) => product.key === key);
+      if (!findProduct) return;
+
+      const { itemid, shopid } = findProduct;
+      window.open(`https://shopee.vn/A-i.${shopid}.${itemid}`, '_blank');
+    },
+    [products],
+  );
 
   const productsData = useMemo(() => {
     let filteredProducts = products;
@@ -126,7 +126,7 @@ export default function ShopeePromotionDetail(props: Props) {
           <div className="w-1/2 flex justify-end">
             <Select
               value={filterSelected}
-              onChange={(e) => onFilterChange(Number(e.target.value))}
+              onChange={(e) => onChangeFilter(Number(e.target.value))}
               className="w-full md:w-auto"
             >
               {filters.map((filter, index) => (
@@ -149,7 +149,7 @@ export default function ShopeePromotionDetail(props: Props) {
         </div>
       </div>
       <div>
-        <ProductList
+        <ShopeeListProduct
           loading={loading}
           products={productsData}
           pagination={pagination}

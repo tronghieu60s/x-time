@@ -11,10 +11,7 @@ import {
   Table,
 } from 'flowbite-react';
 import { useState } from 'react';
-import { getColorFromStatus, getTextFromStatus } from './common';
-import { ProductType } from './common/types';
-
-const statusDisabled = ['pending', 'processing'];
+import { CookyProductType } from './common/types';
 
 const customTableTheme: CustomFlowbiteTheme['table'] = {
   root: {
@@ -24,21 +21,17 @@ const customTableTheme: CustomFlowbiteTheme['table'] = {
 
 type Props = {
   loading?: boolean;
-  products: ProductType[];
+  products: CookyProductType[];
   pagination?: PaginationType;
   showStock?: boolean;
   showPrice?: boolean;
   showImage?: boolean;
-  showPriceHidden?: boolean;
-  showLowestPrice?: boolean;
-  showHighestPrice?: boolean;
-  showStatus?: boolean;
   onView: (key: string) => void;
   onDelete?: (key: string) => void;
   onPageChange?: (page: number) => void;
 };
 
-export default function ProductList(props: Props) {
+export default function CookyListProduct(props: Props) {
   const {
     loading,
     products,
@@ -46,10 +39,6 @@ export default function ProductList(props: Props) {
     showStock = false,
     showPrice = true,
     showImage = false,
-    showPriceHidden = false,
-    showLowestPrice = false,
-    showHighestPrice = false,
-    showStatus = false,
     onView,
     onDelete,
     onPageChange,
@@ -68,18 +57,6 @@ export default function ProductList(props: Props) {
           </Table.HeadCell>
           <Table.HeadCell className="w-32" hidden={!showPrice}>
             Price
-          </Table.HeadCell>
-          <Table.HeadCell className="w-32" hidden={!showPriceHidden}>
-            Price Hidden
-          </Table.HeadCell>
-          <Table.HeadCell className="w-32" hidden={!showLowestPrice}>
-            Lowest Price
-          </Table.HeadCell>
-          <Table.HeadCell className="w-32" hidden={!showHighestPrice}>
-            Highest Price
-          </Table.HeadCell>
-          <Table.HeadCell className="w-40" hidden={!showStatus}>
-            Status
           </Table.HeadCell>
           <Table.HeadCell className="w-20">Action</Table.HeadCell>
         </Table.Head>
@@ -104,27 +81,12 @@ export default function ProductList(props: Props) {
               </Table.Cell>
               <Table.Cell hidden={!showStock}>{product.stock || 0}</Table.Cell>
               <Table.Cell hidden={!showPrice}>{formatCurrency(product.price || 0)}</Table.Cell>
-              <Table.Cell hidden={!showPriceHidden}>{product?.priceHidden || 0} ₫</Table.Cell>
-              <Table.Cell hidden={!showLowestPrice}>
-                {formatCurrency(product.lowestPrice || product.price || 0)}
-              </Table.Cell>
-              <Table.Cell hidden={!showHighestPrice}>
-                {formatCurrency(product.highestPrice || product.price || 0)}
-              </Table.Cell>
-              <Table.Cell hidden={!showStatus}>
-                <div>
-                  <Badge color={getColorFromStatus(product.status)} className="inline font-bold">
-                    {getTextFromStatus(product.status)}
-                  </Badge>
-                </div>
-              </Table.Cell>
               <Table.Cell>
                 <div className="flex gap-2">
                   <Button
                     size="xs"
                     gradientDuoTone="purpleToBlue"
                     onClick={() => onView(product.key)}
-                    disabled={statusDisabled.includes(product.status)}
                   >
                     View
                   </Button>

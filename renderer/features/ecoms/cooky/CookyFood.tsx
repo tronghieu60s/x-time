@@ -1,13 +1,13 @@
 import { filterByConditions } from '@/core/commonFuncs';
 import { getStorageByKey, setStorageByKey } from '@/core/storage';
-import ProductList from '@/features/products/ProductList';
-import { ProductType } from '@/features/products/common/types';
 import { Button, Label, Modal, Select, TextInput } from 'flowbite-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Zap, ZapOff } from 'react-feather';
 import { useDebouncedCallback } from 'use-debounce';
-import { ShopeeFilterType } from '../shopee/common/types';
 import CookyFilter from './CookyFilter';
+import { FilterType } from '@/core/types';
+import CookyFoodDetail from './CookyFoodDetail';
+import { ShopeeProductType } from '../shopee/common/types';
+import CookyListProduct from './CookyListProduct';
 
 const filterAll = {
   id: 0,
@@ -16,6 +16,7 @@ const filterAll = {
   isReadOnly: true,
 };
 
+const apiFoodsMarket = '/api/ecoms/cooky/foods/market';
 const apiProfileProducts = '/api/ecoms/cooky/profile/products';
 
 export default function CookyFood() {
@@ -23,11 +24,12 @@ export default function CookyFood() {
   const [loading, setLoading] = useState(false);
   const [forceRandom, setForceRandom] = useState(0);
 
-  const [filters, setFilters] = useState<ShopeeFilterType[]>([]);
+  const [filters, setFilters] = useState<FilterType[]>([]);
   const [filterSelected, setFilterSelected] = useState(0);
   const [isShowFilter, setIsShowFilter] = useState(false);
 
-  const [products, setProducts] = useState<ProductType[]>([]);
+  const [products, setProducts] = useState<ShopeeProductType[]>([]);
+  const [productSelected, setProductSelected] = useState<ShopeeProductType | null>(null);
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 });
 
   const { page, limit } = pagination;
@@ -57,22 +59,11 @@ export default function CookyFood() {
     setStorageByKey('filters/cooky-foods', filters);
   }, []);
 
-  const onFilterChange = useCallback((index: number) => {
+  const onChangeFilter = useCallback((index: number) => {
     setPagination((prev) => ({ ...prev, page: 1 }));
     setForceRandom(0);
     setFilterSelected(index);
   }, []);
-
-  const onViewProduct = useCallback(
-    (key: string) => {
-      const findProduct = products.find((product) => product.key === key);
-      if (!findProduct) return;
-
-      const { itemid } = findProduct;
-      window.open(`https://www.cooky.vn/market/A-${itemid}`, '_blank');
-    },
-    [products],
-  );
 
   const onChangeSearch = useDebouncedCallback((value) => {
     const search: any = [];
@@ -86,6 +77,16 @@ export default function CookyFood() {
     setSearch(search);
     setPagination((prev) => ({ ...prev, page: 1 }));
   }, 300);
+
+  const onViewProduct = useCallback(
+    (key: string) => {
+      const product = products.find((product) => product.key === key);
+      if (!product) return;
+
+      setProductSelected(product);
+    },
+    [products],
+  );
 
   const productsData = useMemo(() => {
     let filteredProducts = products;
@@ -124,7 +125,7 @@ export default function CookyFood() {
           <div className="w-1/2 flex justify-end">
             <Select
               value={filterSelected}
-              onChange={(e) => onFilterChange(Number(e.target.value))}
+              onChange={(e) => onChangeFilter(Number(e.target.value))}
               className="w-full md:w-auto"
             >
               {filters.map((filter, index) => (
@@ -147,7 +148,7 @@ export default function CookyFood() {
         </div>
       </div>
       <div>
-        <ProductList
+        <CookyListProduct
           loading={loading}
           products={productsData}
           pagination={pagination}
@@ -167,6 +168,11 @@ export default function CookyFood() {
             />
           </Modal.Body>
         </Modal>
+        <CookyFoodDetail
+          api={apiFoodsMarket}
+          productSelected={productSelected}
+          onClose={() => setProductSelected(null)}
+        />
       </div>
     </div>
   );

@@ -3,10 +3,10 @@ import { Button, Label, Select, Table, Tabs, TabsRef, TextInput } from 'flowbite
 import { useFormik } from 'formik';
 import { useCallback, useEffect, useRef } from 'react';
 import { FormFilter, initialValuesFilter } from './common/formik';
-import { CookyFilterType } from './common/types';
+import { FilterType } from '@/core/types';
 
 type Props = {
-  filters: CookyFilterType[];
+  filters: FilterType[];
   onSave: (values: FormFilter) => void;
   onClose: () => void;
 };

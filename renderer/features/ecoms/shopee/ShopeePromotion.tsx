@@ -5,7 +5,7 @@ import { Button, CustomFlowbiteTheme, Modal, Select, Spinner, Tabs } from 'flowb
 import { MouseEvent, useCallback, useEffect, useState } from 'react';
 import ShopeeFilter from './ShopeeFilter';
 import ShopeePromotionDetail from './ShopeePromotionDetail';
-import { ShopeeFilterType } from './common/types';
+import { FilterType } from '@/core/types';
 
 const customTabTheme: CustomFlowbiteTheme['tab'] = {
   tablist: {
@@ -32,7 +32,7 @@ export default function ShopeePromotion() {
   const [loading, setLoading] = useState(false);
   const [tabSelected, setTabSelected] = useState([0]);
 
-  const [filters, setFilters] = useState<ShopeeFilterType[]>([]);
+  const [filters, setFilters] = useState<FilterType[]>([]);
   const [filterSelected, setFilterSelected] = useState(-1);
   const [isShowFilter, setIsShowFilter] = useState(false);
 

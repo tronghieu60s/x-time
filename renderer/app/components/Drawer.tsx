@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 type Props = {
-  open: boolean;
-  onClose: () => void;
   title?: string;
   children?: React.ReactNode;
+  onClose: () => void;
 };
 
 export default function Drawer(props: Props) {
-  const { open, onClose, title, children } = props;
+  const { onClose, title, children } = props;
 
-  if (!open) return null;
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      console.log('onKeyDown', e.key);
+
+      if (e.key === 'Escape') onClose();
+    },
+    [onClose],
+  );
 
   return (
     <div>
