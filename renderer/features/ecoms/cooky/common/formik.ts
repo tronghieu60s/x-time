@@ -1,10 +1,9 @@
-import { CookyFilterType } from './types';
+import { FilterType } from '@/core/types';
 
 export type FormFilter = {
-  filters: CookyFilterType[];
+  filters: FilterType[];
 };
 
 export const initialValuesFilter: FormFilter = {
   filters: [],
 };
-

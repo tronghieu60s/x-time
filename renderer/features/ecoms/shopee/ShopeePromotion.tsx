@@ -1,11 +1,11 @@
 import CountdownTimer from '@/app/components/CountdownTimer';
 import { getStorageByKey, setStorageByKey } from '@/core/storage';
-import { PromotionType } from '@/features/products/common/types';
 import { Button, CustomFlowbiteTheme, Modal, Select, Spinner, Tabs } from 'flowbite-react';
 import { MouseEvent, useCallback, useEffect, useState } from 'react';
 import ShopeeFilter from './ShopeeFilter';
 import ShopeePromotionDetail from './ShopeePromotionDetail';
 import { FilterType } from '@/core/types';
+import { PromotionType } from './common/types';
 
 const customTabTheme: CustomFlowbiteTheme['tab'] = {
   tablist: {

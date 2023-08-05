@@ -1,10 +1,9 @@
-import { ShopeeFilterType } from './types';
+import { FilterType } from '@/core/types';
 
 export type FormFilter = {
-  filters: ShopeeFilterType[];
+  filters: FilterType[];
 };
 
 export const initialValuesFilter: FormFilter = {
   filters: [],
 };
-
