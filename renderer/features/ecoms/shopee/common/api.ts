@@ -47,7 +47,6 @@ export const getProductsPromotion = async (promotionid: number) => {
   products = products.map((product) => ({
     key: uuidv4(),
     ...getProductInfoFromResponse(product),
-    status: 'success',
   }));
 
   return products;

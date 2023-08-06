@@ -67,7 +67,6 @@ const filteredCondition = {
 
 export default function ShopeeFilter(props: Props) {
   const { filters, onSave, onClose } = props;
-
   const tabsRef = useRef<TabsRef>(null);
 
   useEffect(() => {

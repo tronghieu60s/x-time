@@ -5,6 +5,7 @@
     "hasaki",
     "itemid",
     "itemids",
+    "lastid",
     "lazada",
     "modelid",
     "profileid",
@@ -14,6 +15,7 @@
     "soldout",
     "tabitem",
     "tronghieus",
+    "userid",
     "uuidv",
     "xtime"
   ]

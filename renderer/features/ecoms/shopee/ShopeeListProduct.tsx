@@ -113,7 +113,7 @@ export default function ShopeeListProduct(props: Props) {
             <Table.Row>
               <Table.Cell colSpan={10}>
                 <div className="flex justify-center items-center">
-                  {loading && <Spinner size="sm" aria-label="Default status example" />}
+                  {loading && <Spinner size="sm" />}
                   <div className="mt-1 ml-2">
                     {loading ? 'Đang Tải Dữ Liệu' : 'Không Có Dữ Liệu'}
                   </div>

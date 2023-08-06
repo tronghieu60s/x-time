@@ -66,20 +66,13 @@ export default function ShopeePromotion() {
     setTabSelected([0]);
   }, [getPromotions]);
 
-  const onSwitchTabs = useCallback((event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    const target = event.target as HTMLDivElement;
-    const tabIndexId = target.getAttribute('id');
-    if (!tabIndexId) return;
-
-    const tabIndex = Number(tabIndexId.split('-').pop());
-    if (isNaN(tabIndex)) return;
-
-    setTabSelected((prev) => {
-      const newTabSelected = [...prev];
-      if (!newTabSelected.includes(tabIndex)) newTabSelected.push(tabIndex);
-      return newTabSelected;
-    });
-  }, []);
+  const onActiveTabChange = useCallback(
+    (tab) => {
+      const tabIndex = tabSelected.findIndex((item) => item === tab);
+      if (tabIndex === -1) setTabSelected([...tabSelected, tab]);
+    },
+    [tabSelected],
+  );
 
   const onSaveFilter = useCallback((values) => {
     const filters = values.filters.map((filter, index) => ({ ...filter, id: index }));
@@ -127,14 +120,14 @@ export default function ShopeePromotion() {
       <div>
         {loading && (
           <div className="flex justify-center items-center">
-            {loading && <Spinner size="sm" aria-label="Default status example" />}
+            {loading && <Spinner size="sm" />}
             <div className="mt-1 ml-2">{loading ? 'Đang Tải Dữ Liệu' : 'Không Có Dữ Liệu'}</div>
           </div>
         )}
         <Tabs.Group
           theme={customTabTheme}
           style="fullWidth"
-          onClick={onSwitchTabs}
+          onActiveTabChange={onActiveTabChange}
           className="[&>div]:w-full flex flex-wrap md:flex-nowrap"
         >
           {promotions.map((promotion, index) => (

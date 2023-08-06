@@ -17,9 +17,9 @@ const filterAll = {
 };
 
 const apiDetailMarket= '/api/ecoms/cooky/market/detail';
-const apiProductsMarket = '/api/ecoms/cooky/market/products';
+const apiProductsRecipe = '/api/ecoms/cooky/recipes/products';
 
-export default function CookyFood() {
+export default function CookyRecipe() {
   const [search, setSearch] = useState([]);
   const [loading, setLoading] = useState(false);
   const [forceRandom, setForceRandom] = useState(0);
@@ -42,7 +42,7 @@ export default function CookyFood() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`${apiProductsMarket}?id=51`)
+    fetch(`${apiProductsRecipe}?id=51`)
       .then((res) => res.json())
       .then((res) => {
         if (!res.data) return;
@@ -152,6 +152,7 @@ export default function CookyFood() {
           products={productsData}
           pagination={pagination}
           showImage
+          showPrice={false}
           onView={onViewProduct}
           onPageChange={(page: number) => {
             setPagination((prev) => ({ ...prev, page }));

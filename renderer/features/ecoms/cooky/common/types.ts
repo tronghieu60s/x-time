@@ -15,7 +15,7 @@ export type ResponseCookyProfile = {
   display_name: string;
 };
 
-export type ResponseCookyProduct = {
+export type ResponseCookyMarketProduct = {
   id: number;
   name: string;
   price: {
@@ -45,4 +45,10 @@ export type ResponseCookyProduct = {
       unit_price: number;
     };
   }[];
+};
+
+export type ResponseCookyRecipeProduct = {
+  Id: number;
+  Img: string;
+  Name: string;
 };

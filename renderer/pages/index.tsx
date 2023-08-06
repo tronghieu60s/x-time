@@ -5,7 +5,7 @@ export default function IndexPage() {
   return (
     <div>
       <Head>
-        <title>Shopee Test</title>
+        <title>X-Time</title>
       </Head>
       <HomeFeature />
     </div>

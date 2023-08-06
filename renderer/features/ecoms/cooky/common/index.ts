@@ -1,4 +1,4 @@
-import { ResponseCookyProduct, ResponseCookyProfile } from './types';
+import { ResponseCookyMarketProduct, ResponseCookyProfile, ResponseCookyRecipeProduct } from './types';
 
 export const getProfileInfoFromResponse = (response: ResponseCookyProfile) => {
   const profileid = response.id;
@@ -10,7 +10,7 @@ export const getProfileInfoFromResponse = (response: ResponseCookyProfile) => {
   return { profileid, username, signature, displayName, jsonData };
 };
 
-export const getProductInfoFromResponse = (response: ResponseCookyProduct) => {
+export const getProductMarketInfoFromResponse = (response: ResponseCookyMarketProduct) => {
   const itemid = response.id;
   const image = response?.photos[0][3].url;
   const name = response.name;
@@ -18,4 +18,13 @@ export const getProductInfoFromResponse = (response: ResponseCookyProduct) => {
   const jsonData = JSON.stringify(response, null, 2);
 
   return { itemid, image, name, price, jsonData };
+};
+
+export const getProductRecipeInfoFromResponse = (response: ResponseCookyRecipeProduct) => {
+  const itemid = response.Id;
+  const image = response?.Img;
+  const name = response.Name;
+  const jsonData = JSON.stringify(response, null, 2);
+
+  return { itemid, image, name, jsonData };
 };

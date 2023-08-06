@@ -11,6 +11,12 @@ export const objectToArray = (obj: any) => {
   return arr;
 };
 
+export const objectToQueryParams = (o = {}) => {
+  return Object.entries(o)
+    .map((p) => `${encodeURIComponent(p[0])}=${encodeURIComponent(String(p[1]))}`)
+    .join('&');
+};
+
 export const countdownTimer = (time: number) => {
   const currentTime = new Date().getTime();
   const distance = time - currentTime;
