@@ -11,12 +11,11 @@ import CookyListProduct from './CookyListProduct';
 
 const filterAll = {
   id: 0,
-  name: 'Tất Cả Sản Phẩm',
+  name: 'Tất Cả Món Ăn',
   values: [],
   isReadOnly: true,
 };
 
-const apiDetailMarket= '/api/ecoms/cooky/market/detail';
 const apiProductsMarket = '/api/ecoms/cooky/market/products';
 
 export default function CookyFood() {
@@ -168,7 +167,6 @@ export default function CookyFood() {
           </Modal.Body>
         </Modal>
         <CookyFoodDetail
-          api={apiDetailMarket}
           productSelected={productSelected}
           onClose={() => setProductSelected(null)}
         />

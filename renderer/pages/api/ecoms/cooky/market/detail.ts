@@ -5,9 +5,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'GET') {
     try {
       const id = Number(req.query.id || 0);
-      const products = await getProductsMarketDetail(id);
+      const product = await getProductsMarketDetail(id);
 
-      res.status(200).json({ success: true, data: products });
+      res.status(200).json({ success: true, data: product });
     } catch (error) {
       res.status(500).json({ success: false, data: null });
     }

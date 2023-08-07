@@ -1,13 +1,13 @@
-import { getProductsRecipe } from '@/features/ecoms/cooky/common/api';
+import { getProductsRecipe, getProductsRecipeDetail } from '@/features/ecoms/cooky/common/api';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
       const id = Number(req.query.id || 0);
-      const products = await getProductsRecipe(id);
+      const product = await getProductsRecipeDetail(id);
 
-      res.status(200).json({ success: true, data: products });
+      res.status(200).json({ success: true, data: product });
     } catch (error) {
       res.status(500).json({ success: false, data: null });
     }

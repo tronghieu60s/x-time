@@ -5,18 +5,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import CookyFilter from './CookyFilter';
 import { FilterType } from '@/core/types';
-import CookyFoodDetail from './CookyFoodDetail';
 import { ShopeeProductType } from '../shopee/common/types';
 import CookyListProduct from './CookyListProduct';
+import CookyRecipeDetail from './CookyRecipeDetail';
 
 const filterAll = {
   id: 0,
-  name: 'Tất Cả Sản Phẩm',
+  name: 'Tất Cả Món Ăn',
   values: [],
   isReadOnly: true,
 };
 
-const apiDetailMarket= '/api/ecoms/cooky/market/detail';
 const apiProductsRecipe = '/api/ecoms/cooky/recipes/products';
 
 export default function CookyRecipe() {
@@ -168,8 +167,7 @@ export default function CookyRecipe() {
             />
           </Modal.Body>
         </Modal>
-        <CookyFoodDetail
-          api={apiDetailMarket}
+        <CookyRecipeDetail
           productSelected={productSelected}
           onClose={() => setProductSelected(null)}
         />

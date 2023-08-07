@@ -13,25 +13,26 @@ const customTableTheme: CustomFlowbiteTheme['table'] = {
 };
 
 type Props = {
-  api: string;
   productSelected: CookyProductType | null;
   onClose: () => void;
 };
 
+const apiDetailMarket = '/api/ecoms/cooky/market/detail';
+
 export default function CookyFoodDetail(props: Props) {
-  const { api, productSelected, onClose } = props;
+  const { productSelected, onClose } = props;
   const [product, setProduct] = useState<CookyProductType | null>(null);
 
   useEffect(() => {
     if (!productSelected) return;
 
-    fetch(`${api}?id=${productSelected.itemid}`)
+    fetch(`${apiDetailMarket}?id=${productSelected.itemid}`)
       .then((res) => res.json())
       .then((res) => {
         if (!res.data) return;
         setProduct(res.data);
       });
-  }, [api, productSelected]);
+  }, [productSelected]);
 
   const onViewProduct = useCallback(() => {
     if (!product) return;
@@ -85,78 +86,80 @@ export default function CookyFoodDetail(props: Props) {
 
   return (
     <Drawer title={productSelected.name} onClose={onCloseDrawer}>
-      {loading && (
-        <div className="flex justify-center items-center">
-          {loading && <Spinner size="sm" />}
-          <div className="mt-1 ml-2">{loading ? 'Đang Tải Dữ Liệu' : 'Không Có Dữ Liệu'}</div>
-        </div>
-      )}
-      {productData && (
-        <div className="flex flex-col gap-4">
-          <div hidden={!productData.shortDescription}>{productData.shortDescription}</div>
-          <div>
-            <Button size="sm" onClick={onViewProduct}>
-              View More <ChevronRight size={15} className="ml-1" />
-            </Button>
+      <div style={{ maxHeight: '70vh' }}>
+        {loading && (
+          <div className="flex justify-center items-center">
+            {loading && <Spinner size="sm" />}
+            <div className="mt-1 ml-2">{loading ? 'Đang Tải Dữ Liệu' : 'Không Có Dữ Liệu'}</div>
           </div>
-          <Tabs.Group style="default">
-            <Tabs.Item active title="Thành Phần">
-              <Table theme={customTableTheme} striped hidden={!productData?.options.length}>
-                <Table.Head>
-                  <Table.HeadCell>Model</Table.HeadCell>
-                  <Table.HeadCell>Price</Table.HeadCell>
-                  <Table.HeadCell>Quantity</Table.HeadCell>
-                </Table.Head>
-                <Table.Body className="divide-y">
-                  {productData?.options.map((option) => (
-                    <Table.Row
-                      key={option.id}
-                      className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                    >
-                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                        {option.name}
-                      </Table.Cell>
-                      <Table.Cell>{formatCurrency(option.price || 0)}</Table.Cell>
-                      <Table.Cell>{option.quantity}</Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
-              <Table theme={customTableTheme} striped hidden={!productData?.productCombos.length}>
-                <Table.Head>
-                  <Table.HeadCell>Model</Table.HeadCell>
-                  <Table.HeadCell>Price</Table.HeadCell>
-                </Table.Head>
-                <Table.Body className="divide-y">
-                  {productData?.productCombos.map((combo) => (
-                    <Table.Row
-                      key={combo.id}
-                      className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                    >
-                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                        {combo.name}
-                      </Table.Cell>
-                      <Table.Cell>{formatCurrency(combo.price || 0)}</Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
-            </Tabs.Item>
-            {productData.recipeSteps.length > 0 && (
-              <Tabs.Item title="Hướng Dẫn Chế Biến">
-                <div className="flex flex-col gap-2">
-                  {productData.recipeSteps.map((step) => (
-                    <div key={step.title}>
-                      <div className="font-bold">{step.title}</div>
-                      <div>{step.description}</div>
-                    </div>
-                  ))}
-                </div>
+        )}
+        {productData && (
+          <div className="flex flex-col gap-4">
+            <div hidden={!productData.shortDescription}>{productData.shortDescription}</div>
+            <div>
+              <Button size="sm" onClick={onViewProduct}>
+                View More <ChevronRight size={15} className="ml-1" />
+              </Button>
+            </div>
+            <Tabs.Group style="default">
+              <Tabs.Item active title="Thành Phần">
+                <Table theme={customTableTheme} striped hidden={!productData?.options.length}>
+                  <Table.Head>
+                    <Table.HeadCell>Model</Table.HeadCell>
+                    <Table.HeadCell>Price</Table.HeadCell>
+                    <Table.HeadCell>Quantity</Table.HeadCell>
+                  </Table.Head>
+                  <Table.Body className="divide-y">
+                    {productData?.options.map((option) => (
+                      <Table.Row
+                        key={option.id}
+                        className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                      >
+                        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                          {option.name}
+                        </Table.Cell>
+                        <Table.Cell>{formatCurrency(option.price || 0)}</Table.Cell>
+                        <Table.Cell>{option.quantity}</Table.Cell>
+                      </Table.Row>
+                    ))}
+                  </Table.Body>
+                </Table>
+                <Table theme={customTableTheme} striped hidden={!productData?.productCombos.length}>
+                  <Table.Head>
+                    <Table.HeadCell>Model</Table.HeadCell>
+                    <Table.HeadCell>Price</Table.HeadCell>
+                  </Table.Head>
+                  <Table.Body className="divide-y">
+                    {productData?.productCombos.map((combo) => (
+                      <Table.Row
+                        key={combo.id}
+                        className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                      >
+                        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                          {combo.name}
+                        </Table.Cell>
+                        <Table.Cell>{formatCurrency(combo.price || 0)}</Table.Cell>
+                      </Table.Row>
+                    ))}
+                  </Table.Body>
+                </Table>
               </Tabs.Item>
-            )}
-          </Tabs.Group>
-        </div>
-      )}
+              {productData.recipeSteps.length > 0 && (
+                <Tabs.Item title="Hướng Dẫn Chế Biến">
+                  <div className="flex flex-col gap-2">
+                    {productData.recipeSteps.map((step) => (
+                      <div key={step.title}>
+                        <div className="font-bold">{step.title}</div>
+                        <div>{step.description}</div>
+                      </div>
+                    ))}
+                  </div>
+                </Tabs.Item>
+              )}
+            </Tabs.Group>
+          </div>
+        )}
+      </div>
     </Drawer>
   );
 }

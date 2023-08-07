@@ -108,3 +108,7 @@ export const getProductsRecipe = async (id: number) => {
 
   return products;
 };
+
+export const getProductsRecipeDetail = async (id: number) => {
+  
+};
