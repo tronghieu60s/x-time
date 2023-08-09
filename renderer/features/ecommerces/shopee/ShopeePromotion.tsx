@@ -67,7 +67,7 @@ export default function ShopeePromotion() {
   }, [getPromotions]);
 
   const onActiveTabChange = useCallback(
-    (tab) => {
+    (tab: number) => {
       const tabIndex = tabSelected.findIndex((item) => item === tab);
       if (tabIndex === -1) setTabSelected([...tabSelected, tab]);
     },

@@ -17,6 +17,10 @@ export const objectToQueryParams = (o = {}) => {
     .join('&');
 };
 
+export const mapUniqueArray = (arr: any[]) => {
+  return arr.filter((item, pos) => arr.indexOf(item) === pos);
+};
+
 export const countdownTimer = (time: number) => {
   const currentTime = new Date().getTime();
   const distance = time - currentTime;
@@ -29,10 +33,6 @@ export const countdownTimer = (time: number) => {
     minutes: minutes < 10 ? `0${minutes}` : minutes,
     seconds: seconds < 10 ? `0${seconds}` : seconds,
   };
-};
-
-export const mapUniqueArray = (arr: any[]) => {
-  return arr.filter((item, pos) => arr.indexOf(item) === pos);
 };
 
 export const filterByConditions = (arr: any[], conditions?: any[]) => {

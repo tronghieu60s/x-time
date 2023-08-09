@@ -14,3 +14,4 @@ next-env.d.ts
 *.db
 
 full
+firebase.config.json

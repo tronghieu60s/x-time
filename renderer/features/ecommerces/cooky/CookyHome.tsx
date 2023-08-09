@@ -12,7 +12,7 @@ export default function CookyHome() {
   const [tabSelected, setTabSelected] = useState([0]);
 
   const onActiveTabChange = useCallback(
-    (tab) => {
+    (tab: number) => {
       const tabIndex = tabSelected.findIndex((item) => item === tab);
       if (tabIndex === -1) setTabSelected([...tabSelected, tab]);
     },
