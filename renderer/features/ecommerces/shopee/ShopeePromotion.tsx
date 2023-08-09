@@ -1,4 +1,4 @@
-import CountdownTimer from '@/app/components/CountdownTimer';
+import CountdownTimer from '@/features/components/CountdownTimer';
 import { getStorageByKey, setStorageByKey } from '@/core/storage';
 import { Button, CustomFlowbiteTheme, Modal, Select, Spinner, Tabs } from 'flowbite-react';
 import { MouseEvent, useCallback, useEffect, useState } from 'react';
@@ -26,7 +26,7 @@ const filterAll = {
   isReadOnly: true,
 };
 
-const apiPromotions = '/api/ecoms/shopee/promotions';
+const apiPromotions = '/api/ecommerces/shopee/promotions';
 
 export default function ShopeePromotion() {
   const [loading, setLoading] = useState(false);

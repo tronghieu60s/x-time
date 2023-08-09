@@ -1,4 +1,4 @@
-import { getProductsMarketDetail } from '@/features/ecoms/cooky/common/api';
+import { getProductsMarketDetail } from '@/features/ecommerces/cooky/common/api';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

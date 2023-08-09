@@ -1,4 +1,4 @@
-import Drawer from '@/app/components/Drawer';
+import Drawer from '@/features/components/Drawer';
 import { Button, CustomFlowbiteTheme, Spinner, Table, Tabs } from 'flowbite-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CookyProductType, ResponseCookyMarketProduct } from './common/types';
@@ -17,7 +17,7 @@ type Props = {
   onClose: () => void;
 };
 
-const apiDetailRecipes= '/api/ecoms/cooky/recipes/detail';
+const apiDetailRecipes= '/api/ecommerces/cooky/recipes/detail';
 
 export default function CookyRecipeDetail(props: Props) {
   const { productSelected, onClose } = props;

@@ -1,6 +1,6 @@
 import { Button, Label, Select, TextInput } from 'flowbite-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import CountdownTimer from '@/app/components/CountdownTimer';
+import CountdownTimer from '@/features/components/CountdownTimer';
 import { filterByConditions } from '@/core/commonFuncs';
 import { useDebouncedCallback } from 'use-debounce';
 import { FilterType } from '@/core/types';
@@ -15,7 +15,7 @@ type Props = {
   onSetNumOfProducts: (numOfProducts: number) => void;
 };
 
-const apiPromotionProducts = '/api/ecoms/shopee/promotions/products';
+const apiPromotionProducts = '/api/ecommerces/shopee/promotions/products';
 
 export default function ShopeePromotionDetail(props: Props) {
   const { filters, filterGlobalSelected, promotion, currentPromotion, onSetNumOfProducts } = props;

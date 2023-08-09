@@ -16,7 +16,7 @@ const filterAll = {
   isReadOnly: true,
 };
 
-const apiProductsMarket = '/api/ecoms/cooky/market/products';
+const apiProductsMarket = '/api/ecommerces/cooky/market/products';
 
 export default function CookyFood() {
   const [search, setSearch] = useState([]);

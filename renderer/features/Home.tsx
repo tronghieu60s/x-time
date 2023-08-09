@@ -1,8 +1,8 @@
 import { Tabs } from 'flowbite-react';
 import { useCallback, useState } from 'react';
-import CookyHome from './ecoms/cooky/CookyHome';
-import HasakiHome from './ecoms/hasaki/HasakiHome';
-import ShopeeHome from './ecoms/shopee/ShopeeHome';
+import CookyHome from './ecommerces/cooky/CookyHome';
+import HasakiHome from './ecommerces/hasaki/HasakiHome';
+import ShopeeHome from './ecommerces/shopee/ShopeeHome';
 
 const tabs = [
   { title: 'Shopee', content: <ShopeeHome /> },
