@@ -1,8 +1,9 @@
 import { auth } from '@/core/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Button, Label, Spinner, TextInput } from 'flowbite-react';
-import { useFormik } from 'formik';
+import { FormikHelpers, useFormik } from 'formik';
 import { useCallback, useState } from 'react';
+import toast from 'react-hot-toast';
 import { initialValuesRegister } from './common/formik';
 
 type Props = {
@@ -14,17 +15,40 @@ export default function AuthRegister(props: Props) {
   const { onCancel, onSwitch } = props;
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = useCallback((values) => {
-    const { email, password, rePassword } = values;
+  const onSubmit = useCallback(
+    (values, formikHelpers: FormikHelpers<any>) => {
+      const { email, password, rePassword } = values;
 
-    setIsLoading(true);
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => {})
-      .catch((error) => {
-        alert(error.message);
-      })
-      .then(() => setIsLoading(false));
-  }, []);
+      if (password !== rePassword) {
+        toast.error('Mật khẩu không khớp!');
+        return;
+      }
+
+      setIsLoading(true);
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          toast.success('Đăng ký thành công!');
+          onSwitch();
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          if (errorCode === 'auth/invalid-email') {
+            toast.error('Email không hợp lệ!');
+          }
+          if (errorCode === 'auth/email-already-in-use') {
+            toast.error('Email đã được sử dụng!');
+          }
+          if (errorCode === 'auth/weak-password') {
+            toast.error('Mật khẩu phải có ít nhất 6 ký tự!');
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+          formikHelpers.resetForm();
+        });
+    },
+    [onSwitch],
+  );
 
   const formikBag = useFormik({
     initialValues: initialValuesRegister,
@@ -43,6 +67,7 @@ export default function AuthRegister(props: Props) {
         <Label htmlFor="email" value="Email:" />
         <TextInput
           id="email"
+          type="email"
           value={formikBag.values.email}
           onChange={formikBag.handleChange}
           placeholder="Email..."
@@ -61,9 +86,9 @@ export default function AuthRegister(props: Props) {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="re-password" value="Nhập lại mật khẩu:" />
+        <Label htmlFor="rePassword" value="Nhập lại mật khẩu:" />
         <TextInput
-          id="re-password"
+          id="rePassword"
           type="password"
           value={formikBag.values.rePassword}
           onChange={formikBag.handleChange}

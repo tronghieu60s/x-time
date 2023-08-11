@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { getProductMarketInfoFromResponse, getProductRecipeInfoFromResponse, getProfileInfoFromResponse } from '.';
 import * as cheerio from 'cheerio';
 import { objectToQueryParams } from '@/core/commonFuncs';
+import { getCookyCacheMarket, setCookyCacheMarket } from './database';
 
 const {
   COOKY_PROFILE_URL = 'https://app-api.cooky.vn/api/user/get_public_profile',
@@ -29,6 +30,11 @@ export const getProfile = async (username: string) => {
 };
 
 export const getProductsMarket = async (id: number) => {
+  const cacheMarket = await getCookyCacheMarket();
+  if (cacheMarket) return cacheMarket;
+
+  console.log('no cache');
+
   const body = { designer_id: id };
   const init = {
     method: 'POST',
@@ -65,6 +71,8 @@ export const getProductsMarket = async (id: number) => {
     key: uuidv4(),
     ...getProductMarketInfoFromResponse(product),
   }));
+
+  setCookyCacheMarket(products);
 
   return products;
 };

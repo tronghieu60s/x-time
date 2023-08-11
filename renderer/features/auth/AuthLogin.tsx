@@ -1,8 +1,9 @@
 import { auth } from '@/core/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Button, Label, Spinner, TextInput } from 'flowbite-react';
-import { useFormik } from 'formik';
+import { FormikHelpers, useFormik } from 'formik';
 import { useCallback, useState } from 'react';
+import toast from 'react-hot-toast';
 import { initialValuesLogin } from './common/formik';
 
 type Props = {
@@ -14,17 +15,35 @@ export default function AuthLogin(props: Props) {
   const { onCancel, onSwitch } = props;
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = useCallback((values) => {
-    const { email, password } = values;
+  const onSubmit = useCallback(
+    (values, formikHelpers: FormikHelpers<any>) => {
+      const { email, password } = values;
 
-    setIsLoading(true);
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => {})
-      .catch((error) => {
-        alert(error.message);
-      })
-      .then(() => setIsLoading(false));
-  }, []);
+      setIsLoading(true);
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          toast.success('Đăng nhập thành công!');
+          onCancel();
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          if (errorCode === 'auth/invalid-email') {
+            toast.error('Email không hợp lệ!');
+          }
+          if (errorCode === 'auth/wrong-password') {
+            toast.error('Tài khoản hoặc mật khẩu không đúng!');
+          }
+          if (errorCode === 'auth/user-not-found') {
+            toast.error('Tài khoản hoặc mật khẩu không đúng!');
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+          formikHelpers.resetForm();
+        });
+    },
+    [onCancel],
+  );
 
   const formikBag = useFormik({
     initialValues: initialValuesLogin,
@@ -43,6 +62,7 @@ export default function AuthLogin(props: Props) {
         <Label htmlFor="email" value="Email:" />
         <TextInput
           id="email"
+          type="email"
           value={formikBag.values.email}
           onChange={formikBag.handleChange}
           placeholder="Email..."
