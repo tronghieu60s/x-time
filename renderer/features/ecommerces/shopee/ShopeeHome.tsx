@@ -6,7 +6,7 @@ export default function ShopeeHome() {
     <div className="flex flex-col gap-4">
       <Tabs.Group style="fullWidth">
         <Tabs.Item title="Shopee Now"></Tabs.Item>
-        <Tabs.Item title="Shopee Flash Sale">
+        <Tabs.Item title="Shopee Sale">
           <ShopeePromotion />
         </Tabs.Item>
       </Tabs.Group>

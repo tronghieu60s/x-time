@@ -1,7 +1,7 @@
-import { getProductsMarket } from '@/features/ecommerces/cooky/common/api';
+import { getProductsRecipe } from '@/features/ecommerces/cooky/common/api';
 import {
-  getCacheProductsMarket,
-  setCacheProductsMarket,
+  getCacheProductsRecipe,
+  setCacheProductsRecipe,
 } from '@/features/ecommerces/cooky/common/database';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -10,15 +10,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const id = Number(req.query.id || 0);
 
-      let products = await getCacheProductsMarket(id);
+      let products = await getCacheProductsRecipe(id);
       if (products) {
         res.status(200).json({ success: true, data: products });
         return;
       }
 
       try {
-        products = await getProductsMarket(id);
-        setCacheProductsMarket(id, products);
+        products = await getProductsRecipe(id);
+        setCacheProductsRecipe(id, products);
 
         res.status(200).json({ success: true, data: products });
       } catch (error) {

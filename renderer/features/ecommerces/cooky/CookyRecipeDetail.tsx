@@ -17,7 +17,7 @@ type Props = {
   onClose: () => void;
 };
 
-const apiDetailRecipes= '/api/ecommerces/cooky/recipes/detail';
+const apiDetailRecipes= '/api/ecommerces/cooky/recipe/detail';
 
 export default function CookyRecipeDetail(props: Props) {
   const { productSelected, onClose } = props;
