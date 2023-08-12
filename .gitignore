@@ -12,6 +12,3 @@ data
 next-env.d.ts
 # Local DB
 *.db
-
-full
-firebase.config.json
